@@ -48,7 +48,7 @@ export function getTenantMonthsRange(createdAt?: string | null, now: Date = new 
   if (createdAt) {
     const regDate = new Date(createdAt);
     startYear = regDate.getFullYear();
-    startMonth = regDate.getMonth();
+    startMonth = 0; // Always start from January of the creation year (show all months)
   }
 
   let endYear = currentYear;
@@ -89,15 +89,18 @@ export function computeTenantLedger(
   const months = getTenantMonthsRange(tenant.created_at, now);
   const chronologicalMonths = [...months].reverse();
 
+  const tenantStartISO = tenant.created_at ? toMonthISO(new Date(tenant.created_at)) : "";
   const ledger: Record<string, MonthLedger> = {};
   for (const m of chronologicalMonths) {
+    const isBeforeStart = tenantStartISO && m < tenantStartISO;
+    const rentAmount = isBeforeStart ? 0 : tenant.rent_amount;
     ledger[m] = {
       month: m,
-      rentAmount: tenant.rent_amount,
+      rentAmount: rentAmount,
       confirmedPaid: 0,
       pendingPaid: 0,
-      status: "due",
-      remainingAmount: tenant.rent_amount,
+      status: isBeforeStart ? "paid" : "due",
+      remainingAmount: rentAmount,
     };
   }
 
@@ -106,13 +109,15 @@ export function computeTenantLedger(
     if (p.tenant_id !== tenant.id) continue;
     const m = p.month;
     if (!ledger[m]) {
+      const isBeforeStart = tenantStartISO && m < tenantStartISO;
+      const rentAmount = isBeforeStart ? 0 : tenant.rent_amount;
       ledger[m] = {
         month: m,
-        rentAmount: tenant.rent_amount,
+        rentAmount: rentAmount,
         confirmedPaid: 0,
         pendingPaid: 0,
-        status: "due",
-        remainingAmount: tenant.rent_amount,
+        status: isBeforeStart ? "paid" : "due",
+        remainingAmount: rentAmount,
       };
       chronologicalMonths.push(m);
     }
