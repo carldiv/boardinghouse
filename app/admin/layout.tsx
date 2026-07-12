@@ -222,13 +222,29 @@ export default async function AdminLayout({
           bottom: 0;
           left: 0;
           z-index: 9999;
-          display: flex;
-          align-items: flex-start; /* Align to top instead of center to prevent clipping */
-          justify-content: center;
           background-color: rgba(10, 14, 23, 0.8);
           backdrop-filter: blur(4px);
-          padding: 2rem 1rem;
           overflow-y: auto; /* Enable scroll on the overlay backdrop itself */
+          padding: 2rem 1rem;
+          text-align: center;
+          white-space: nowrap;
+        }
+
+        /* Ghost helper element to vertical-align center modal card */
+        .modal-overlay-container::before {
+          content: '';
+          display: inline-block;
+          height: 100%;
+          vertical-align: middle;
+          margin-right: -0.25em; /* Adjusts spacing */
+        }
+
+        .modal-overlay-container > div {
+          display: inline-block;
+          vertical-align: middle;
+          white-space: normal;
+          text-align: left;
+          width: 100%;
         }
 
         @media (max-width: 768px) {
