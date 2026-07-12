@@ -336,7 +336,13 @@ tbody tr:hover {
 
 /* Receipt upload */
 .dashboard-shell .receipt-upload {
+  position: relative;
+  padding: 1.25rem;
+  text-align: center;
+  cursor: pointer;
   border: 2px dashed #263044;
+  border-radius: 0.75rem;
+  transition: border-color 0.15s;
 }
 
 .dashboard-shell .receipt-upload:hover {
@@ -357,7 +363,6 @@ tbody tr:hover {
   opacity: 0;
   cursor: pointer;
 }
-
 /* History cards */
 .dashboard-shell .history-card {
   background: #1e2535;
