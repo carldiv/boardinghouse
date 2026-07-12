@@ -34,6 +34,10 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // ── Public routes — always allowed ────────────────────────────────
+  if (pathname.startsWith("/api")) {
+    return supabaseResponse;
+  }
+
   if (pathname.startsWith("/login")) {
     // Already logged in → send to appropriate dashboard
     if (user) {

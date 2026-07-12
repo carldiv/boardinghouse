@@ -22,6 +22,6 @@ jobs:
           fi
           
           echo "Triggering notification endpoint..."
-          curl -f -X POST "${{ secrets.NEXT_PUBLIC_APP_URL }}/api/cron/notify-overdue" \
+          curl -f -L -X POST "${{ secrets.NEXT_PUBLIC_APP_URL }}/api/cron/notify-overdue" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json"
