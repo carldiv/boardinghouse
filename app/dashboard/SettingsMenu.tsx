@@ -26,7 +26,7 @@ export default function SettingsMenu({ logoutAction }: SettingsMenuProps) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--color-surface-3)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[#94a3b8]"
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-[#94a3b8] transition-colors hover:bg-[var(--color-surface-2)] hover:text-white"
         aria-label="Settings"
         aria-expanded={open}
       >
