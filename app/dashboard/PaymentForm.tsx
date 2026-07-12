@@ -90,7 +90,8 @@ export default function PaymentForm({
       setScanStatus("Parsing details...");
 
       // GCash reference number regex: match a 13-digit number (can contain spaces/dashes)
-      const refRegex = /\b\d[\d\s-]{11,18}\d\b/g;
+      // We don't use strict \b boundaries to handle OCR run-on texts (like "083324Jul")
+      const refRegex = /\d[\d\s-]{10,24}\d/g;
       const matches = text.match(refRegex);
       let foundRef = false;
       if (matches) {
