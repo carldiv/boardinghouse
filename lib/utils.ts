@@ -43,15 +43,12 @@ export function getTenantMonthsRange(createdAt?: string | null, now: Date = new 
   
   const currentYear = now.getFullYear();
   let startYear = currentYear;
-  let startMonth = 0; // Always start from January of the current year
+  let startMonth = 0; // Default to January of current year
 
   if (createdAt) {
     const regDate = new Date(createdAt);
-    // If the tenant registered in a previous year, start from their registration month
-    if (regDate.getFullYear() < startYear) {
-      startYear = regDate.getFullYear();
-      startMonth = regDate.getMonth();
-    }
+    startYear = regDate.getFullYear();
+    startMonth = regDate.getMonth();
   }
 
   let endYear = currentYear;
