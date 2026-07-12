@@ -27,8 +27,6 @@ export default function ViewTenantModal({ tenant, payments, isOpen, onClose }: V
           border: "1px solid #263044",
           borderRadius: "1rem",
           boxShadow: "0 25px 50px rgba(0,0,0,0.6)",
-          maxHeight: "calc(100vh - 4rem)",
-          overflowY: "auto",
           padding: "2rem",
           flexShrink: 0,
         }}
