@@ -32,13 +32,14 @@ export default function AddTenantModal({ isOpen, onClose, onSuccess }: AddTenant
           maxWidth: "520px",
           backgroundColor: "#161b27",
           border: "1px solid #263044",
-          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4)",
-          maxHeight: "85vh",
+          borderRadius: "1rem",
+          boxShadow: "0 25px 50px rgba(0,0,0,0.6)",
+          maxHeight: "calc(100vh - 4rem)",
           overflowY: "auto",
           padding: "2rem",
           display: "flex",
           flexDirection: "column",
-          margin: "auto",
+          flexShrink: 0,
         }}
         onClick={(e) => e.stopPropagation()}
       >

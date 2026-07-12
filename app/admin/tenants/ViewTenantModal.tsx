@@ -22,14 +22,15 @@ export default function ViewTenantModal({ tenant, payments, isOpen, onClose }: V
         className="card animate-in"
         style={{
           width: "100%",
-          maxWidth: "760px",
+          maxWidth: "780px",
           backgroundColor: "#161b27",
           border: "1px solid #263044",
-          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4)",
-          maxHeight: "85vh",
+          borderRadius: "1rem",
+          boxShadow: "0 25px 50px rgba(0,0,0,0.6)",
+          maxHeight: "calc(100vh - 4rem)",
           overflowY: "auto",
           padding: "2rem",
-          margin: "auto",
+          flexShrink: 0,
         }}
         onClick={(e) => e.stopPropagation()}
       >

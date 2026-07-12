@@ -214,37 +214,23 @@ export default async function AdminLayout({
           color: #818cf8;
         }
         
-        /* Fix modal overlay layout positioning under fixed headers/sidebars */
+        /* Modal overlay — covers full screen, flex-centers the card */
         .modal-overlay-container {
-          position: fixed;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          z-index: 9999;
-          background-color: rgba(10, 14, 23, 0.8);
-          backdrop-filter: blur(4px);
-          overflow-y: auto; /* Enable scroll on the overlay backdrop itself */
-          padding: 2rem 1rem;
-          text-align: center;
-          white-space: nowrap;
-        }
-
-        /* Ghost helper element to vertical-align center modal card */
-        .modal-overlay-container::before {
-          content: '';
-          display: inline-block;
-          height: 100%;
-          vertical-align: middle;
-          margin-right: -0.25em; /* Adjusts spacing */
-        }
-
-        .modal-overlay-container > div {
-          display: inline-block;
-          vertical-align: middle;
-          white-space: normal;
-          text-align: left;
-          width: 100%;
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          z-index: 9999 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          background-color: rgba(10, 14, 23, 0.85) !important;
+          backdrop-filter: blur(6px) !important;
+          padding: 1.5rem !important;
+          box-sizing: border-box !important;
         }
 
         @media (max-width: 768px) {
