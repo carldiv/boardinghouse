@@ -7,6 +7,7 @@ export interface TenantRow {
   rent_amount: number;
   due_day: number;
   auth_user_id: string | null;
+  created_at?: string;
 }
 
 export interface PaymentRow {
@@ -28,35 +29,173 @@ export interface Settings {
   qr_image_url: string | null;
 }
 
+export interface MonthLedger {
+  month: string;
+  rentAmount: number;
+  confirmedPaid: number;
+  pendingPaid: number;
+  status: PaymentStatus;
+  remainingAmount: number;
+}
+
+/**
+ * Generates an array of month ISO strings YYYY-MM-01 from tenant registration month to now + 2 months (future)
+ */
+export function getTenantMonthsRange(createdAt?: string | null, now: Date = new Date()): string[] {
+  const months: string[] = [];
+  const startDate = createdAt ? new Date(createdAt) : new Date(now.getFullYear(), now.getMonth() - 11, 1);
+  
+  const startYear = startDate.getFullYear();
+  const startMonth = startDate.getMonth();
+
+  const endYear = now.getFullYear();
+  const endMonth = now.getMonth() + 2;
+
+  let currYear = startYear;
+  let currMonth = startMonth;
+
+  while (currYear < endYear || (currYear === endYear && currMonth <= endMonth)) {
+    const mISO = `${currYear}-${String(currMonth + 1).padStart(2, "0")}-01`;
+    months.push(mISO);
+
+    currMonth++;
+    if (currMonth > 11) {
+      currMonth = 0;
+      currYear++;
+    }
+  }
+
+  return months.reverse();
+}
+
+/**
+ * Distributes payments sequentially (rollover logic) to compute the ledger details of each month.
+ */
+export function computeTenantLedger(
+  tenant: TenantRow,
+  payments: PaymentRow[],
+  now: Date = new Date()
+): Record<string, MonthLedger> {
+  const months = getTenantMonthsRange(tenant.created_at, now);
+  const chronologicalMonths = [...months].reverse();
+
+  const ledger: Record<string, MonthLedger> = {};
+  for (const m of chronologicalMonths) {
+    ledger[m] = {
+      month: m,
+      rentAmount: tenant.rent_amount,
+      confirmedPaid: 0,
+      pendingPaid: 0,
+      status: "due",
+      remainingAmount: tenant.rent_amount,
+    };
+  }
+
+  // Populate actual confirmed and pending payments
+  for (const p of payments) {
+    if (p.tenant_id !== tenant.id) continue;
+    const m = p.month;
+    if (!ledger[m]) {
+      ledger[m] = {
+        month: m,
+        rentAmount: tenant.rent_amount,
+        confirmedPaid: 0,
+        pendingPaid: 0,
+        status: "due",
+        remainingAmount: tenant.rent_amount,
+      };
+      chronologicalMonths.push(m);
+    }
+
+    if (p.status === "confirmed") {
+      ledger[m].confirmedPaid += p.amount;
+    } else if (p.status === "pending") {
+      ledger[m].pendingPaid += p.amount;
+    }
+  }
+
+  chronologicalMonths.sort();
+
+  // Distribute Confirmed Excess payments
+  let confirmedExcessPool = 0;
+  for (const m of chronologicalMonths) {
+    const item = ledger[m];
+    if (item.confirmedPaid > item.rentAmount) {
+      confirmedExcessPool += (item.confirmedPaid - item.rentAmount);
+      item.confirmedPaid = item.rentAmount;
+    }
+  }
+
+  for (const m of chronologicalMonths) {
+    const item = ledger[m];
+    if (item.confirmedPaid < item.rentAmount) {
+      const deficit = item.rentAmount - item.confirmedPaid;
+      const allocated = Math.min(deficit, confirmedExcessPool);
+      item.confirmedPaid += allocated;
+      confirmedExcessPool -= allocated;
+    }
+  }
+
+  // Distribute Pending Excess payments
+  let pendingExcessPool = 0;
+  for (const m of chronologicalMonths) {
+    const item = ledger[m];
+    if (item.pendingPaid > 0) {
+      const confirmedShortage = Math.max(0, item.rentAmount - item.confirmedPaid);
+      if (item.pendingPaid > confirmedShortage) {
+        pendingExcessPool += (item.pendingPaid - confirmedShortage);
+        item.pendingPaid = confirmedShortage;
+      }
+    }
+  }
+
+  for (const m of chronologicalMonths) {
+    const item = ledger[m];
+    const shortage = item.rentAmount - item.confirmedPaid - item.pendingPaid;
+    if (shortage > 0 && pendingExcessPool > 0) {
+      const allocated = Math.min(shortage, pendingExcessPool);
+      item.pendingPaid += allocated;
+      pendingExcessPool -= allocated;
+    }
+  }
+
+  // Compute final status and remaining values
+  for (const m of chronologicalMonths) {
+    const item = ledger[m];
+    item.remainingAmount = Math.max(0, item.rentAmount - item.confirmedPaid);
+
+    if (item.confirmedPaid >= item.rentAmount) {
+      item.status = "paid";
+    } else if (item.confirmedPaid + item.pendingPaid >= item.rentAmount) {
+      item.status = "pending";
+    } else {
+      const [y, monthPart] = m.split("-").map(Number);
+      const lastDay = new Date(y, monthPart, 0).getDate();
+      const dueDay = Math.min(tenant.due_day, lastDay);
+      const dueDate = new Date(y, monthPart - 1, dueDay);
+
+      if (now > dueDate) {
+        item.status = "overdue";
+      } else {
+        item.status = "due";
+      }
+    }
+  }
+
+  return ledger;
+}
+
 /**
  * Computes the payment status for a tenant for the current month.
- * - 'paid'    → confirmed payment exists for current month
- * - 'pending' → submitted (pending) payment exists, not yet confirmed
- * - 'overdue' → past due_day, no confirmed/pending payment
- * - 'due'     → within the month, no payment yet
  */
 export function computeStatus(
   tenant: TenantRow,
   payments: PaymentRow[],
   now: Date = new Date()
 ): PaymentStatus {
+  const ledger = computeTenantLedger(tenant, payments, now);
   const currentMonthISO = toMonthISO(now);
-
-  const currentMonthPayments = payments.filter(
-    (p) => p.tenant_id === tenant.id && p.month === currentMonthISO
-  );
-
-  const confirmedTotal = currentMonthPayments
-    .filter((p) => p.status === "confirmed")
-    .reduce((sum, p) => sum + p.amount, 0);
-
-  if (confirmedTotal >= tenant.rent_amount) return "paid";
-
-  if (currentMonthPayments.some((p) => p.status === "pending")) return "pending";
-
-  // No payment or underpaid for this month — check if overdue
-  if (now.getDate() > tenant.due_day) return "overdue";
-  return "due";
+  return ledger[currentMonthISO]?.status ?? "due";
 }
 
 /**

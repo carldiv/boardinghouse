@@ -1,13 +1,21 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { formatPeso, formatMonth, type TenantRow, type PaymentRow } from "@/lib/utils";
+import { formatPeso, formatMonth, computeTenantLedger, getTenantMonthsRange, toMonthISO, type TenantRow, type PaymentRow } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export const metadata = { title: "View Tenant — BH Manager" };
 
+const STATUS_LABEL: Record<string, string> = {
+  paid: "Paid",
+  pending: "Pending",
+  overdue: "Overdue",
+  due: "Due",
+};
+
 export default async function ViewTenantPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
+  const now = new Date();
 
   const [{ data: tenant }, { data: payments }] = await Promise.all([
     supabase.from("tenants").select("*").eq("id", id).single(),
@@ -18,6 +26,16 @@ export default async function ViewTenantPage({ params }: { params: Promise<{ id:
 
   const t = tenant as TenantRow;
   const p = (payments ?? []) as PaymentRow[];
+
+  const ledger = computeTenantLedger(t, p, now);
+  const allMonths = getTenantMonthsRange(t.created_at, now);
+
+  const currentMonthISO = toMonthISO(now);
+  const visibleMonths = allMonths.filter((m) => {
+    if (m <= currentMonthISO) return true;
+    const item = ledger[m];
+    return item && (item.confirmedPaid > 0 || item.pendingPaid > 0);
+  });
 
   return (
     <div className="animate-in" style={{ maxWidth: "860px" }}>
@@ -44,7 +62,7 @@ export default async function ViewTenantPage({ params }: { params: Promise<{ id:
         <p style={{ color: "#64748b", fontSize: "0.85rem", margin: "0.25rem 0 0" }}>Details and payment records for Room {t.room}</p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "1.5rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
         {/* Personal Info */}
         <div style={{ backgroundColor: "#161b27", border: "1px solid #263044", borderRadius: "1rem", padding: "1.5rem" }}>
           <h2 style={{ fontSize: "0.95rem", fontWeight: 600, color: "#94a3b8", marginTop: 0, marginBottom: "1rem" }}>Personal Info</h2>
@@ -90,6 +108,47 @@ export default async function ViewTenantPage({ params }: { params: Promise<{ id:
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+
+      {/* Monthly Billing Ledger */}
+      <div style={{ backgroundColor: "#161b27", border: "1px solid #263044", borderRadius: "1rem", padding: "1.5rem" }}>
+        <h2 style={{ fontSize: "0.95rem", fontWeight: 600, color: "#94a3b8", marginTop: 0, marginBottom: "1rem" }}>Monthly Billing Ledger</h2>
+        <div className="table-wrapper">
+          <table style={{ minWidth: "100%" }}>
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Rent Due</th>
+                <th>Paid Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibleMonths.map((m) => {
+                const item = ledger[m];
+                return (
+                  <tr key={m}>
+                    <td style={{ fontWeight: 600, color: "#e2e8f0" }}>{formatMonth(m)}</td>
+                    <td>{formatPeso(item.rentAmount)}</td>
+                    <td style={{ color: item.confirmedPaid >= item.rentAmount ? "#10b981" : "#cbd5e1" }}>
+                      {formatPeso(item.confirmedPaid)}
+                      {item.pendingPaid > 0 && (
+                        <span style={{ fontSize: "0.8rem", color: "#f59e0b", marginLeft: "0.4rem" }}>
+                          (+{formatPeso(item.pendingPaid)} pending)
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      <span className={`badge badge-${item.status}`}>
+                        {STATUS_LABEL[item.status]}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
 

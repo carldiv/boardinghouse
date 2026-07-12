@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getTenantRow } from "@/lib/session";
-import { recentMonths, toMonthISO, type PaymentRow, type Settings } from "@/lib/utils";
+import { getTenantMonthsRange, computeTenantLedger, type PaymentRow, type Settings } from "@/lib/utils";
 import GcashDetailsCard from "../GcashDetailsCard";
 import GcashQrCard from "../GcashQrCard";
 import PaymentForm from "../PaymentForm";
@@ -27,33 +27,18 @@ export default async function PaymentsPage() {
   const payments = (paymentsRaw ?? []) as PaymentRow[];
   const settings = settingsRaw as Settings | null;
 
+  const ledger = computeTenantLedger(tenant, payments, now);
+  const allMonths = getTenantMonthsRange(tenant.created_at, now);
+
   const unpaidMonths: string[] = [];
   const remainingAmounts: Record<string, number> = {};
 
-  // Past 2 months — include if not fully paid (overdue/partial)
-  const pastMonths = recentMonths(2, now);
-  for (const m of pastMonths) {
-    const mPayments = payments.filter(
-      (p) => p.month === m && (p.status === "confirmed" || p.status === "pending")
-    );
-    const totalPaidOrPending = mPayments.reduce((sum, p) => sum + p.amount, 0);
-    if (totalPaidOrPending < tenant.rent_amount) {
+  for (const m of allMonths) {
+    const item = ledger[m];
+    // If the month is not fully paid (has remaining balance > 0)
+    if (item && item.remainingAmount > 0) {
       unpaidMonths.push(m);
-      remainingAmounts[m] = tenant.rent_amount - totalPaidOrPending;
-    }
-  }
-
-  // Next 2 months — always offer as advance payment unless already paid/pending
-  for (let i = 1; i <= 2; i++) {
-    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
-    const m = toMonthISO(d);
-    const mPayments = payments.filter(
-      (p) => p.month === m && (p.status === "confirmed" || p.status === "pending")
-    );
-    const totalPaidOrPending = mPayments.reduce((sum, p) => sum + p.amount, 0);
-    if (totalPaidOrPending < tenant.rent_amount) {
-      unpaidMonths.push(m);
-      remainingAmounts[m] = tenant.rent_amount - totalPaidOrPending;
+      remainingAmounts[m] = item.remainingAmount;
     }
   }
 
