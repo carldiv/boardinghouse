@@ -40,19 +40,30 @@ export default function PaymentForm({
 
   const [selectedMonth, setSelectedMonth] = useState(getInitialMonth);
 
+  // Helper to calculate accumulated balance up to a given month (inclusive)
+  const getAccumulatedBalance = (targetMonth: string) => {
+    let total = 0;
+    for (const m of allMonths) {
+      const item = ledger[m];
+      if (item) {
+        total += item.remainingAmount;
+      }
+      if (m === targetMonth) break;
+    }
+    return total;
+  };
+
   const [amountVal, setAmountVal] = useState(() => {
     const initialMonth = getInitialMonth();
-    const item = ledger[initialMonth];
-    const remaining = item ? item.remainingAmount : rentAmount;
-    return (remaining > 0 ? remaining : rentAmount).toString();
+    const accum = getAccumulatedBalance(initialMonth);
+    return (accum > 0 ? accum : rentAmount).toString();
   });
 
   const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
     setSelectedMonth(val);
-    const item = ledger[val];
-    const remaining = item ? item.remainingAmount : rentAmount;
-    setAmountVal((remaining > 0 ? remaining : rentAmount).toString());
+    const accum = getAccumulatedBalance(val);
+    setAmountVal((accum > 0 ? accum : rentAmount).toString());
   };
 
   useEffect(() => {
@@ -96,8 +107,11 @@ export default function PaymentForm({
                   suffix = " — Paid";
                 } else if (item.status === "pending") {
                   suffix = " — Pending";
-                } else if (item.remainingAmount > 0) {
-                  suffix = ` — ${formatPeso(item.remainingAmount)}`;
+                } else {
+                  const accum = getAccumulatedBalance(m);
+                  if (accum > 0) {
+                    suffix = ` — ${formatPeso(accum)}`;
+                  }
                 }
               }
               return (
