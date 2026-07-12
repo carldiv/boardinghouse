@@ -217,7 +217,10 @@ export default async function AdminLayout({
         /* Fix modal overlay layout positioning under fixed headers/sidebars */
         .modal-overlay-container {
           position: fixed;
-          inset: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
           z-index: 9999;
           display: flex;
           align-items: center;
@@ -225,6 +228,12 @@ export default async function AdminLayout({
           background-color: rgba(10, 14, 23, 0.8);
           backdrop-filter: blur(4px);
           padding: 2rem 1rem;
+        }
+
+        @media (min-width: 769px) {
+          .modal-overlay-container {
+            padding-left: calc(240px + 1rem) !important;
+          }
         }
 
         @media (max-width: 768px) {
