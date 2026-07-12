@@ -24,17 +24,28 @@ export default function AddTenantModal({ isOpen, onClose, onSuccess }: AddTenant
     <div
       style={{
         position: "fixed",
-        inset: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
         backgroundColor: "rgba(10, 14, 23, 0.8)",
         backdropFilter: "blur(4px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         zIndex: 1000,
-        padding: "1rem",
+        padding: "2rem 1rem",
       }}
       onClick={onClose}
+      className="modal-overlay"
     >
+      <style>{`
+        @media (min-width: 769px) {
+          .modal-overlay {
+            left: 240px !important;
+          }
+        }
+      `}</style>
       <div
         className="card animate-in"
         style={{
