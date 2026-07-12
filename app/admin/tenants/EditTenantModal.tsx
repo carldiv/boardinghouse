@@ -22,114 +22,65 @@ export default function EditTenantModal({ tenant, isOpen, onClose, onSuccess }: 
 
   if (!isOpen) return null;
 
+  const SIDEBAR_W = 240;
+
   return (
-    <div
-      onClick={onClose}
-      className="modal-overlay-container"
-    >
+    <>
+      {/* Backdrop */}
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(10,14,23,0.85)", backdropFilter: "blur(6px)", zIndex: 9998 }} />
+
+      {/* Scroll container */}
       <div
-        className="card animate-in"
-        style={{
-          width: "100%",
-          maxWidth: "520px",
-          backgroundColor: "#161b27",
-          border: "1px solid #263044",
-          borderRadius: "1rem",
-          boxShadow: "0 25px 50px rgba(0,0,0,0.6)",
-          padding: "2rem",
-          display: "flex",
-          flexDirection: "column",
-          flexShrink: 0,
-        }}
-        onClick={(e) => e.stopPropagation()}
+        style={{ position: "fixed", top: 0, left: SIDEBAR_W, right: 0, bottom: 0, zIndex: 9999, overflowY: "auto", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "2rem 1.5rem", boxSizing: "border-box" }}
+        onClick={onClose}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-          <div>
-            <h2 style={{ fontSize: "1.3rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>
-              Edit Tenant Profile
-            </h2>
-            <p style={{ color: "#64748b", marginTop: "0.2rem", fontSize: "0.8rem", margin: 0 }}>
-              Update room assignment or payment settings.
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: "none",
-              border: "none",
-              color: "#64748b",
-              fontSize: "1.5rem",
-              cursor: "pointer",
-              padding: "0.25rem",
-            }}
-          >
-            &times;
-          </button>
-        </div>
-
-        <form action={action} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          <input type="hidden" name="id" value={tenant.id} />
-
-          <Field label="Full Name" id="edit-name" name="name" defaultValue={tenant.name} required />
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-            <Field label="Room" id="edit-room" name="room" defaultValue={tenant.room} required />
-            <Field label="Monthly Rent (₱)" id="edit-rent" name="rent_amount" type="number" defaultValue={String(tenant.rent_amount)} min="1" step="0.01" required />
-          </div>
-
-          <div>
-            <label
-              htmlFor="edit-due-day"
-              style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
-            >
-              Rent Due Day (1–31)
-            </label>
-            <select id="edit-due-day" name="due_day" className="input" defaultValue={tenant.due_day}>
-              {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                <option key={d} value={d} style={{ background: "#1e2535" }}>
-                  Day {d}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {state?.error && (
-            <div
-              style={{
-                background: "rgba(239,68,68,0.1)",
-                border: "1px solid rgba(239,68,68,0.3)",
-                borderRadius: "0.5rem",
-                padding: "0.75rem 1rem",
-                color: "#ef4444",
-                fontSize: "0.875rem",
-              }}
-            >
-              {state.error}
+        <div
+          style={{ width: "100%", maxWidth: "520px", backgroundColor: "#161b27", border: "1px solid #263044", borderRadius: "1rem", boxShadow: "0 25px 50px rgba(0,0,0,0.6)", padding: "2rem", flexShrink: 0 }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+            <div>
+              <h2 style={{ fontSize: "1.3rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>Edit Tenant Profile</h2>
+              <p style={{ color: "#64748b", fontSize: "0.8rem", margin: "0.25rem 0 0" }}>Update room assignment or payment settings.</p>
             </div>
-          )}
-
-          <div style={{ display: "flex", gap: "0.75rem", paddingTop: "0.5rem" }}>
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-ghost"
-              style={{ flex: 1 }}
-            >
-              Cancel
-            </button>
-            <button
-              id="submit-edit-tenant"
-              type="submit"
-              disabled={pending}
-              className="btn btn-primary"
-              style={{ flex: 2 }}
-            >
-              {pending ? "Saving…" : "Save Changes"}
-            </button>
+            <button onClick={onClose} style={{ background: "none", border: "none", color: "#64748b", fontSize: "1.5rem", cursor: "pointer", padding: "0.25rem", lineHeight: 1 }}>&times;</button>
           </div>
-        </form>
+
+          <form action={action} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <input type="hidden" name="id" value={tenant.id} />
+
+            <Field label="Full Name" id="edit-name" name="name" defaultValue={tenant.name} required />
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <Field label="Room" id="edit-room" name="room" defaultValue={tenant.room} required />
+              <Field label="Monthly Rent (₱)" id="edit-rent" name="rent_amount" type="number" defaultValue={String(tenant.rent_amount)} min="1" step="0.01" required />
+            </div>
+
+            <div>
+              <label htmlFor="edit-due-day" style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}>Rent Due Day (1–31)</label>
+              <select id="edit-due-day" name="due_day" className="input" defaultValue={tenant.due_day}>
+                {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                  <option key={d} value={d} style={{ background: "#1e2535" }}>Day {d}</option>
+                ))}
+              </select>
+            </div>
+
+            {state?.error && (
+              <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "0.5rem", padding: "0.75rem 1rem", color: "#ef4444", fontSize: "0.875rem" }}>
+                {state.error}
+              </div>
+            )}
+
+            <div style={{ display: "flex", gap: "0.75rem", paddingTop: "0.5rem" }}>
+              <button type="button" onClick={onClose} className="btn btn-ghost" style={{ flex: 1 }}>Cancel</button>
+              <button id="submit-edit-tenant" type="submit" disabled={pending} className="btn btn-primary" style={{ flex: 2 }}>
+                {pending ? "Saving…" : "Save Changes"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

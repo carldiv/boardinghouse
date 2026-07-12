@@ -13,25 +13,22 @@ interface ViewTenantModalProps {
 export default function ViewTenantModal({ tenant, payments, isOpen, onClose }: ViewTenantModalProps) {
   if (!isOpen) return null;
 
+  const SIDEBAR_W = 240;
+
   return (
-    <div
-      onClick={onClose}
-      className="modal-overlay-container"
-    >
+    <>
+      {/* Backdrop */}
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(10,14,23,0.85)", backdropFilter: "blur(6px)", zIndex: 9998 }} />
+
+      {/* Scroll container */}
       <div
-        className="card animate-in"
-        style={{
-          width: "100%",
-          maxWidth: "780px",
-          backgroundColor: "#161b27",
-          border: "1px solid #263044",
-          borderRadius: "1rem",
-          boxShadow: "0 25px 50px rgba(0,0,0,0.6)",
-          padding: "2rem",
-          flexShrink: 0,
-        }}
-        onClick={(e) => e.stopPropagation()}
+        style={{ position: "fixed", top: 0, left: SIDEBAR_W, right: 0, bottom: 0, zIndex: 9999, overflowY: "auto", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "2rem 1.5rem", boxSizing: "border-box" }}
+        onClick={onClose}
       >
+        <div
+          style={{ width: "100%", maxWidth: "780px", backgroundColor: "#161b27", border: "1px solid #263044", borderRadius: "1rem", boxShadow: "0 25px 50px rgba(0,0,0,0.6)", padding: "2rem", flexShrink: 0 }}
+          onClick={(e) => e.stopPropagation()}
+        >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <div>
             <h2 style={{ fontSize: "1.3rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>
@@ -135,7 +132,8 @@ export default function ViewTenantModal({ tenant, payments, isOpen, onClose }: V
             .view-grid { grid-template-columns: 1fr !important; }
           }
         `}</style>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
