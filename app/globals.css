@@ -261,13 +261,27 @@ tbody tr:hover {
 }
 
 /* Dashboard shell */
+/* ============================================================
+   Dashboard shell — Mobile Centered Layout (single source of truth)
+   ============================================================ */
+
 .dashboard-shell {
+  position: relative;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
   min-height: 100vh;
-  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-  background-color: var(--background);
+  display: flex;
+  flex-direction: column;
+  background-color: #0f1117;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
+  border-left: 1px solid #1e2535;
+  border-right: 1px solid #1e2535;
+  box-sizing: border-box;
 }
 
-.dashboard-header {
+/* Header */
+.dashboard-shell .dashboard-header {
   position: sticky;
   top: 0;
   z-index: 40;
@@ -276,9 +290,10 @@ tbody tr:hover {
   justify-content: space-between;
   height: 56px;
   padding: 0 1.25rem;
-  background: rgba(15, 17, 23, 0.9);
+  background: rgba(15, 17, 23, 0.95);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--color-surface-3);
+  border-bottom: 1px solid #1e2535;
+  flex-shrink: 0;
 }
 
 .header-avatar {
@@ -292,117 +307,12 @@ tbody tr:hover {
   flex-shrink: 0;
 }
 
-.dashboard-main {
+/* Main content — grows to fill space between header and nav */
+.dashboard-shell .dashboard-main {
+  flex: 1 1 auto;
   width: 100%;
   padding: 1.25rem;
-}
-
-/* Bottom navigation */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  display: flex;
-  align-items: stretch;
-  justify-content: space-around;
-  height: calc(64px + env(safe-area-inset-bottom, 0px));
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  background: rgba(15, 17, 23, 0.95);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid var(--color-surface-3);
-}
-
-.bottom-nav-item {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.2rem;
-  padding: 0.5rem;
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: #64748b;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.bottom-nav-item:hover {
-  color: #94a3b8;
-}
-
-.bottom-nav-item-active {
-  color: var(--color-brand-500);
-}
-
-.bottom-nav-item-active svg {
-  color: var(--color-brand-500);
-}
-
-/* Form helpers */
-.form-label {
-  display: block;
-  margin-bottom: 0.4rem;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #94a3b8;
-}
-
-.receipt-upload {
-  position: relative;
-  padding: 1.25rem;
-  text-align: center;
-  cursor: pointer;
-  border: 2px dashed var(--color-surface-3);
-  border-radius: 0.75rem;
-  transition: border-color 0.15s;
-}
-
-.receipt-upload:hover {
-  border-color: var(--color-brand-500);
-}
-
-.receipt-upload-input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-/* History cards */
-.history-card {
-  padding: 1rem;
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-surface-3);
-  border-radius: 0.75rem;
-}
-
-/* ============================================================
-   Tenant Dashboard — Mobile Centered Layout
-   ============================================================ */
-
-.dashboard-shell {
-  position: relative;
-  max-width: 480px;
-  margin: 0 auto;
-  min-height: 100vh;
-  background-color: #0f1117;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
-  border-left: 1px solid #1e2535;
-  border-right: 1px solid #1e2535;
-  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-}
-
-/* Header — scoped sticky within container */
-.dashboard-shell .dashboard-header {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  background: rgba(15, 17, 23, 0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid #1e2535;
+  box-sizing: border-box;
 }
 
 /* Cards */
@@ -410,6 +320,7 @@ tbody tr:hover {
   background: #161b27;
   border: 1px solid #263044;
   border-radius: 1.25rem;
+  padding: 1.5rem;
 }
 
 /* Inputs */
@@ -436,6 +347,8 @@ tbody tr:hover {
 .dashboard-shell .history-card {
   background: #1e2535;
   border: 1px solid #263044;
+  border-radius: 0.75rem;
+  padding: 1rem;
 }
 
 /* Buttons */
@@ -458,41 +371,51 @@ tbody tr:hover {
   background: #1e2535;
 }
 
-/* Glow Pulse */
 .dashboard-shell .glow-pulse {
   animation: pulse-glow 2.5s ease-in-out infinite;
 }
 
-/* Bottom Navigation — centered & fixed to container width */
+/* ============================================================
+   Bottom Navigation — sticky child of .dashboard-shell.
+   This is the key fix: it's no longer positioned against the
+   viewport (fixed + left:50% + translateX), it's a normal
+   flex child that sticks to the bottom of THIS container, so
+   its width is always exactly equal to dashboard-main's width.
+   No independent centering math = no drift, ever.
+   ============================================================ */
 .dashboard-shell .bottom-nav {
-  position: fixed;
+  position: sticky;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   width: 100%;
-  max-width: 480px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
+  padding: 0.35rem 1.25rem calc(0.35rem + env(safe-area-inset-bottom, 0px));
   background: rgba(15, 17, 23, 0.97);
   backdrop-filter: blur(12px);
   border-top: 1px solid #1e2535;
-  padding: 0.35rem 1rem;
-  align-items: center;
   z-index: 50;
-  height: calc(64px + env(safe-area-inset-bottom, 0px));
 }
 
 .dashboard-shell .bottom-nav-item {
-  color: #64748b;
-  border-radius: 14px;
-  height: 48px;
-  padding: 0.25rem 0.75rem;
-  transition: all 0.2s ease;
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.2rem;
+  height: 48px;
+  padding: 0.25rem 0.75rem;
+  border-radius: 14px;
   font-size: 0.7rem;
   font-weight: 500;
+  color: #64748b;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .dashboard-shell .bottom-nav-item:hover {
@@ -508,4 +431,3 @@ tbody tr:hover {
 .dashboard-shell .bottom-nav-item-active svg {
   color: #ffffff !important;
 }
-
