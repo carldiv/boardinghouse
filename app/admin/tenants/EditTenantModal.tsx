@@ -40,6 +40,7 @@ export default function EditTenantModal({ tenant, isOpen, onClose, onSuccess }: 
           padding: "2rem",
           display: "flex",
           flexDirection: "column",
+          margin: "auto",
         }}
         onClick={(e) => e.stopPropagation()}
       >

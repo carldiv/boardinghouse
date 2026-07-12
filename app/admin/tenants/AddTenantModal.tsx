@@ -38,6 +38,7 @@ export default function AddTenantModal({ isOpen, onClose, onSuccess }: AddTenant
           padding: "2rem",
           display: "flex",
           flexDirection: "column",
+          margin: "auto",
         }}
         onClick={(e) => e.stopPropagation()}
       >

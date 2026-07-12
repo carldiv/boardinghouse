@@ -26,8 +26,10 @@ export default function ViewTenantModal({ tenant, payments, isOpen, onClose }: V
           backgroundColor: "#161b27",
           border: "1px solid #263044",
           boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4)",
-          maxHeight: "90vh",
+          maxHeight: "85vh",
           overflowY: "auto",
+          padding: "2rem",
+          margin: "auto",
         }}
         onClick={(e) => e.stopPropagation()}
       >
