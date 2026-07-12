@@ -78,16 +78,23 @@ export default function PaymentForm({
 
   const scanReceipt = async (file: File) => {
     setIsScanning(true);
-    setScanStatus("Initializing OCR scanner...");
+    setScanStatus("Uploading receipt to Google Vision...");
     try {
-      const { createWorker } = await import("tesseract.js");
-      const worker = await createWorker("eng");
-      
-      setScanStatus("Scanning receipt image...");
-      const { data: { text } } = await worker.recognize(file);
-      await worker.terminate();
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/ocr", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to scan receipt image");
+      }
 
       setScanStatus("Parsing details...");
+      const data = await res.json();
+      const text = data.text || "";
 
       // GCash reference number regex: match a 13-digit number (can contain spaces/dashes)
       // We don't use strict \b boundaries to handle OCR run-on texts (like "083324Jul")
