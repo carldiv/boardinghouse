@@ -1,0 +1,27 @@
+name: Send Overdue Rent Notifications
+
+on:
+  schedule:
+    # Runs daily at 00:00 UTC (8:00 AM Philippine Standard Time)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Overdue Notifications
+        run: |
+          if [ -z "${{ secrets.NEXT_PUBLIC_APP_URL }}" ]; then
+            echo "Error: NEXT_PUBLIC_APP_URL secret is not set."
+            exit 1
+          fi
+          if [ -z "${{ secrets.CRON_SECRET }}" ]; then
+            echo "Error: CRON_SECRET secret is not set."
+            exit 1
+          fi
+          
+          echo "Triggering notification endpoint..."
+          curl -f -X POST "${{ secrets.NEXT_PUBLIC_APP_URL }}/api/cron/notify-overdue" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"
