@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getRole, getSession } from "@/lib/session";
 import { logout } from "@/actions/auth";
+import IdleLogout from "@/lib/IdleLogout";
 
 const navItems = [
   {
@@ -203,6 +204,8 @@ export default async function AdminLayout({
       >
         {children}
       </main>
+
+      <IdleLogout />
 
       <style>{`
         .admin-nav-link:hover {

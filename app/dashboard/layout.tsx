@@ -4,6 +4,7 @@ import { getRole, getTenantRow } from "@/lib/session";
 import { logout } from "@/actions/auth";
 import BottomNav from "./BottomNav";
 import SettingsMenu from "./SettingsMenu";
+import IdleLogout from "@/lib/IdleLogout";
 
 export default async function TenantLayout({
   children,
@@ -55,6 +56,7 @@ export default async function TenantLayout({
       <main className="dashboard-main">{children}</main>
 
       <BottomNav />
+      <IdleLogout />
     </div>
   );
 }
