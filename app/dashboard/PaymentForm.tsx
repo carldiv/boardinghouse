@@ -2,47 +2,57 @@
 
 import { useActionState, useState, useEffect, useRef } from "react";
 import { submitPayment } from "@/actions/payments";
-import { formatMonth } from "@/lib/utils";
+import { formatMonth, formatPeso, type MonthLedger } from "@/lib/utils";
 
 interface PaymentFormProps {
   tenantId: string;
   rentAmount: number;
-  unpaidMonths: string[];
-  remainingAmounts: Record<string, number>;
+  allMonths: string[];
+  ledger: Record<string, MonthLedger>;
 }
 
 export default function PaymentForm({
   tenantId,
   rentAmount,
-  unpaidMonths,
-  remainingAmounts,
+  allMonths,
+  ledger,
 }: PaymentFormProps) {
   const [state, action, pending] = useActionState(submitPayment, undefined);
   const [preview, setPreview] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [selectedMonth, setSelectedMonth] = useState(() => {
+  // We want to default to the oldest unpaid month (remainingAmount > 0)
+  // If all are paid, default to the current month or first month
+  const getInitialMonth = () => {
     const now = new Date();
     const currentMonthISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
-    if (unpaidMonths.includes(currentMonthISO)) {
-      return currentMonthISO;
-    }
-    return unpaidMonths[0] || "";
-  });
+    
+    // Find the oldest unpaid month
+    const oldestUnpaid = allMonths.find((m) => {
+      const item = ledger[m];
+      return item && item.remainingAmount > 0;
+    });
+
+    if (oldestUnpaid) return oldestUnpaid;
+    if (allMonths.includes(currentMonthISO)) return currentMonthISO;
+    return allMonths[0] || "";
+  };
+
+  const [selectedMonth, setSelectedMonth] = useState(getInitialMonth);
 
   const [amountVal, setAmountVal] = useState(() => {
-    const now = new Date();
-    const currentMonthISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
-    const initialMonth = unpaidMonths.includes(currentMonthISO) ? currentMonthISO : (unpaidMonths[0] || "");
-    const remaining = remainingAmounts[initialMonth] ?? rentAmount;
-    return remaining.toString();
+    const initialMonth = getInitialMonth();
+    const item = ledger[initialMonth];
+    const remaining = item ? item.remainingAmount : rentAmount;
+    return (remaining > 0 ? remaining : rentAmount).toString();
   });
 
   const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
     setSelectedMonth(val);
-    const remaining = remainingAmounts[val] ?? rentAmount;
-    setAmountVal(remaining.toString());
+    const item = ledger[val];
+    const remaining = item ? item.remainingAmount : rentAmount;
+    setAmountVal((remaining > 0 ? remaining : rentAmount).toString());
   };
 
   useEffect(() => {
@@ -65,7 +75,7 @@ export default function PaymentForm({
     <form ref={formRef} action={action} className="flex flex-col gap-4">
       <input type="hidden" name="tenant_id" value={tenantId} />
 
-      {unpaidMonths.length > 1 && (
+      {allMonths.length > 1 && (
         <div>
           <label htmlFor="month" className="form-label">
             Billing Month
@@ -78,17 +88,30 @@ export default function PaymentForm({
             value={selectedMonth}
             onChange={handleMonthChange}
           >
-            {unpaidMonths.map((m) => (
-              <option key={m} value={m} className="bg-[var(--color-surface-2)]">
-                {formatMonth(m)}
-              </option>
-            ))}
+            {allMonths.map((m) => {
+              const item = ledger[m];
+              let suffix = "";
+              if (item) {
+                if (item.status === "paid") {
+                  suffix = " — Paid";
+                } else if (item.status === "pending") {
+                  suffix = " — Pending";
+                } else if (item.remainingAmount > 0) {
+                  suffix = ` — ${formatPeso(item.remainingAmount)}`;
+                }
+              }
+              return (
+                <option key={m} value={m} className="bg-[var(--color-surface-2)]">
+                  {formatMonth(m)}{suffix}
+                </option>
+              );
+            })}
           </select>
         </div>
       )}
 
-      {unpaidMonths.length === 1 && (
-        <input type="hidden" name="month" value={unpaidMonths[0]} />
+      {allMonths.length === 1 && (
+        <input type="hidden" name="month" value={allMonths[0]} />
       )}
 
       <div>
