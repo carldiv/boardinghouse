@@ -24,30 +24,9 @@ export default function EditTenantModal({ tenant, isOpen, onClose, onSuccess }: 
 
   return (
     <div
-      style={{
-        position: "fixed",
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0,
-        backgroundColor: "rgba(10, 14, 23, 0.8)",
-        backdropFilter: "blur(4px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000,
-        padding: "2rem 1rem",
-      }}
       onClick={onClose}
-      className="modal-overlay"
+      className="modal-overlay-container"
     >
-      <style>{`
-        @media (min-width: 769px) {
-          .modal-overlay {
-            left: 240px !important;
-          }
-        }
-      `}</style>
       <div
         className="card animate-in"
         style={{

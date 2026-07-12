@@ -213,6 +213,20 @@ export default async function AdminLayout({
           background: rgba(99,102,241,0.1);
           color: #818cf8;
         }
+        
+        /* Fix modal overlay layout positioning under fixed headers/sidebars */
+        .modal-overlay-container {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(10, 14, 23, 0.8);
+          backdrop-filter: blur(4px);
+          padding: 2rem 1rem;
+        }
+
         @media (max-width: 768px) {
           .admin-sidebar {
             width: 100% !important;
