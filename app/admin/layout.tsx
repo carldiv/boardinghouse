@@ -230,12 +230,6 @@ export default async function AdminLayout({
           padding: 2rem 1rem;
         }
 
-        @media (min-width: 769px) {
-          .modal-overlay-container {
-            padding-left: calc(240px + 1rem) !important;
-          }
-        }
-
         @media (max-width: 768px) {
           .admin-sidebar {
             width: 100% !important;
