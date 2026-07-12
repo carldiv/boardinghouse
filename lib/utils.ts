@@ -78,7 +78,7 @@ export function getTenantMonthsRange(createdAt?: string | null, now: Date = new 
     }
   }
 
-  return months.reverse();
+  return months;
 }
 
 /**
