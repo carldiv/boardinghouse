@@ -21,9 +21,19 @@ export default function PaymentForm({
   const [preview, setPreview] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [selectedMonth, setSelectedMonth] = useState(unpaidMonths[0] || "");
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const now = new Date();
+    const currentMonthISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+    if (unpaidMonths.includes(currentMonthISO)) {
+      return currentMonthISO;
+    }
+    return unpaidMonths[0] || "";
+  });
+
   const [amountVal, setAmountVal] = useState(() => {
-    const initialMonth = unpaidMonths[0] || "";
+    const now = new Date();
+    const currentMonthISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+    const initialMonth = unpaidMonths.includes(currentMonthISO) ? currentMonthISO : (unpaidMonths[0] || "");
     const remaining = remainingAmounts[initialMonth] ?? rentAmount;
     return remaining.toString();
   });
