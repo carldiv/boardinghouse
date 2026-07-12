@@ -80,12 +80,96 @@ export async function confirmPayment(id: string) {
   await requireAdmin();
   const supabase = await createSupabaseServerClient();
 
+  // 1. Fetch payment to know who the tenant is
+  const { data: payment, error: fetchPayError } = await supabase
+    .from("payments")
+    .select("*, tenant:tenants(*)")
+    .eq("id", id)
+    .single();
+
+  if (fetchPayError || !payment) {
+    throw new Error(fetchPayError?.message || "Payment not found");
+  }
+
   const { error } = await supabase
     .from("payments")
     .update({ status: "confirmed", confirmed_at: new Date().toISOString() })
     .eq("id", id);
 
   if (error) throw new Error(error.message);
+
+  // 2. Asynchronously notify the tenant if email setup is available
+  try {
+    const tenant = payment.tenant;
+    if (tenant && tenant.auth_user_id) {
+      const adminClient = createSupabaseAdminClient();
+      const { data: userData, error: userError } = await adminClient.auth.admin.getUserById(tenant.auth_user_id);
+      
+      if (!userError && userData?.user?.email) {
+        const email = userData.user.email;
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+        
+        // Format month and currency
+        const monthParts = payment.month.split("-");
+        const monthLabel = new Date(parseInt(monthParts[0]), parseInt(monthParts[1]) - 1, 1).toLocaleDateString("en-PH", {
+          month: "long",
+          year: "numeric",
+        });
+
+        const amountFormatted = new Intl.NumberFormat("en-PH", {
+          style: "currency",
+          currency: "PHP",
+        }).format(payment.amount);
+
+        const { sendEmail } = await import("@/lib/mail");
+        
+        const subject = `✅ Rent Payment Confirmed — Room ${tenant.room}`;
+        const text = `Hi ${tenant.name},\n\nYour rent payment of ${amountFormatted} for ${monthLabel} has been confirmed!\n\nThank you for your payment.`;
+        const html = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #1e293b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+            <div style="text-align: center; margin-bottom: 24px;">
+              <div style="background-color: #dcfce7; color: #22c55e; width: 48px; height: 48px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; line-height: 48px;">✓</div>
+            </div>
+            
+            <h2 style="color: #0f172a; margin-top: 0; text-align: center; font-size: 20px; font-weight: 700;">Payment Confirmed</h2>
+            <p style="font-size: 15px; line-height: 1.5; color: #475569; margin-top: 16px;">Hi <strong>${tenant.name}</strong>,</p>
+            <p style="font-size: 15px; line-height: 1.5; color: #475569;">Your rent payment has been successfully confirmed.</p>
+            
+            <div style="background-color: #f8fafc; padding: 18px; border-radius: 8px; margin: 20px 0; border: 1px solid #f1f5f9;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Room</td>
+                  <td style="font-weight: 600; text-align: right; padding: 6px 0; color: #0f172a;">${tenant.room}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Month</td>
+                  <td style="font-weight: 600; text-align: right; padding: 6px 0; color: #0f172a;">${monthLabel}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Amount Paid</td>
+                  <td style="font-weight: 700; text-align: right; padding: 6px 0; color: #22c55e;">${amountFormatted}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Ref Number</td>
+                  <td style="font-weight: 600; text-align: right; padding: 6px 0; color: #0f172a;">${payment.ref_number}</td>
+                </tr>
+              </table>
+            </div>
+
+            <p style="font-size: 14px; line-height: 1.5; color: #475569; text-align: center; margin: 20px 0;">Thank you for your payment!</p>
+            
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="${appUrl}/dashboard" style="background-color: #4f46e5; color: #ffffff; padding: 10px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; font-size: 14px;">Go to Dashboard</a>
+            </div>
+          </div>
+        `;
+
+        await sendEmail({ to: email, subject, text, html });
+      }
+    }
+  } catch (emailErr) {
+    console.error("Failed to send payment confirmation email:", emailErr);
+  }
 
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/payments");
@@ -106,12 +190,96 @@ export async function rejectPayment(
 
   if (!id) return { error: "Payment ID is required." };
 
+  // Fetch payment/tenant info first for email notification
+  const { data: payment, error: fetchPayError } = await supabase
+    .from("payments")
+    .select("*, tenant:tenants(*)")
+    .eq("id", id)
+    .single();
+
+  if (fetchPayError || !payment) {
+    return { error: fetchPayError?.message || "Payment not found" };
+  }
+
   const { error } = await supabase
     .from("payments")
     .update({ status: "rejected", admin_note: admin_note || null })
     .eq("id", id);
 
   if (error) return { error: error.message };
+
+  // Send rejection email notification
+  try {
+    const tenant = payment.tenant;
+    if (tenant && tenant.auth_user_id) {
+      const adminClient = createSupabaseAdminClient();
+      const { data: userData, error: userError } = await adminClient.auth.admin.getUserById(tenant.auth_user_id);
+      
+      if (!userError && userData?.user?.email) {
+        const email = userData.user.email;
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+        
+        // Format month and currency
+        const monthParts = payment.month.split("-");
+        const monthLabel = new Date(parseInt(monthParts[0]), parseInt(monthParts[1]) - 1, 1).toLocaleDateString("en-PH", {
+          month: "long",
+          year: "numeric",
+        });
+
+        const amountFormatted = new Intl.NumberFormat("en-PH", {
+          style: "currency",
+          currency: "PHP",
+        }).format(payment.amount);
+
+        const { sendEmail } = await import("@/lib/mail");
+        
+        const subject = `❌ Payment Rejected — Room ${tenant.room}`;
+        const text = `Hi ${tenant.name},\n\nYour rent payment of ${amountFormatted} for ${monthLabel} was rejected by the admin.\n\nReason/Note: ${admin_note || "None provided"}\n\nPlease submit a new payment reference in your dashboard.`;
+        const html = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #1e293b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+            <div style="text-align: center; margin-bottom: 24px;">
+              <div style="background-color: #fee2e2; color: #ef4444; width: 48px; height: 48px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; line-height: 48px;">⚠️</div>
+            </div>
+            
+            <h2 style="color: #0f172a; margin-top: 0; text-align: center; font-size: 20px; font-weight: 700;">Payment Rejected</h2>
+            <p style="font-size: 15px; line-height: 1.5; color: #475569; margin-top: 16px;">Hi <strong>${tenant.name}</strong>,</p>
+            <p style="font-size: 15px; line-height: 1.5; color: #475569;">Your rent payment submission was rejected by the administrator.</p>
+            
+            <div style="background-color: #f8fafc; padding: 18px; border-radius: 8px; margin: 20px 0; border: 1px solid #f1f5f9;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Room</td>
+                  <td style="font-weight: 600; text-align: right; padding: 6px 0; color: #0f172a;">${tenant.room}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Month</td>
+                  <td style="font-weight: 600; text-align: right; padding: 6px 0; color: #0f172a;">${monthLabel}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Amount Submitted</td>
+                  <td style="font-weight: 700; text-align: right; padding: 6px 0; color: #ef4444;">${amountFormatted}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Note from Admin</td>
+                  <td style="font-weight: 600; text-align: right; padding: 6px 0; color: #dc2626;">${admin_note || "No explanation provided"}</td>
+                </tr>
+              </table>
+            </div>
+
+            <p style="font-size: 14px; line-height: 1.5; color: #475569;">Please log in to your dashboard to correct the reference number or re-upload your receipt.</p>
+            
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="${appUrl}/dashboard" style="background-color: #4f46e5; color: #ffffff; padding: 10px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; font-size: 14px;">Go to Dashboard</a>
+            </div>
+          </div>
+        `;
+
+        await sendEmail({ to: email, subject, text, html });
+      }
+    }
+  } catch (emailErr) {
+    console.error("Failed to send payment rejection email:", emailErr);
+  }
 
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/payments");
@@ -120,3 +288,4 @@ export async function rejectPayment(
   revalidatePath("/dashboard/history");
   return { success: true };
 }
+
