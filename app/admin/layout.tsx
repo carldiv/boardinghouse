@@ -223,11 +223,12 @@ export default async function AdminLayout({
           left: 0;
           z-index: 9999;
           display: flex;
-          align-items: center;
+          align-items: flex-start; /* Align to top instead of center to prevent clipping */
           justify-content: center;
           background-color: rgba(10, 14, 23, 0.8);
           backdrop-filter: blur(4px);
           padding: 2rem 1rem;
+          overflow-y: auto; /* Enable scroll on the overlay backdrop itself */
         }
 
         @media (max-width: 768px) {
