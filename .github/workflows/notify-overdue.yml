@@ -16,12 +16,7 @@ jobs:
             echo "Error: NEXT_PUBLIC_APP_URL secret is not set."
             exit 1
           fi
-          if [ -z "${{ secrets.CRON_SECRET }}" ]; then
-            echo "Error: CRON_SECRET secret is not set."
-            exit 1
-          fi
-          
+
           echo "Triggering notification endpoint..."
           curl -f -L -X POST "${{ secrets.NEXT_PUBLIC_APP_URL }}/api/cron/notify-overdue" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json"
