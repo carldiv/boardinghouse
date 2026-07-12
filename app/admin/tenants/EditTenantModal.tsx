@@ -1,16 +1,18 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { createTenant } from "@/actions/tenants";
+import { updateTenant } from "@/actions/tenants";
+import type { TenantRow } from "@/lib/utils";
 
-interface AddTenantModalProps {
+interface EditTenantModalProps {
+  tenant: TenantRow;
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export default function AddTenantModal({ isOpen, onClose, onSuccess }: AddTenantModalProps) {
-  const [state, action, pending] = useActionState(createTenant, undefined);
+export default function EditTenantModal({ tenant, isOpen, onClose, onSuccess }: EditTenantModalProps) {
+  const [state, action, pending] = useActionState(updateTenant, undefined);
 
   useEffect(() => {
     if (state?.success) {
@@ -51,10 +53,10 @@ export default function AddTenantModal({ isOpen, onClose, onSuccess }: AddTenant
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <div>
             <h2 style={{ fontSize: "1.3rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>
-              Add Tenant
+              Edit Tenant Profile
             </h2>
             <p style={{ color: "#64748b", marginTop: "0.2rem", fontSize: "0.8rem", margin: 0 }}>
-              Creates a tenant and a login account.
+              Update room assignment or payment settings.
             </p>
           </div>
           <button
@@ -73,23 +75,23 @@ export default function AddTenantModal({ isOpen, onClose, onSuccess }: AddTenant
         </div>
 
         <form action={action} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          <Field label="Full Name" id="name" name="name" placeholder="Juan dela Cruz" required />
-          <Field label="Email Address" id="email" name="email" type="email" placeholder="tenant@email.com" required />
-          <Field label="Temporary Password" id="password" name="password" type="password" placeholder="Minimum 6 characters" required />
+          <input type="hidden" name="id" value={tenant.id} />
+
+          <Field label="Full Name" id="edit-name" name="name" defaultValue={tenant.name} required />
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-            <Field label="Room" id="room" name="room" placeholder="101" required />
-            <Field label="Monthly Rent (₱)" id="rent_amount" name="rent_amount" type="number" placeholder="3500" min="1" step="0.01" required />
+            <Field label="Room" id="edit-room" name="room" defaultValue={tenant.room} required />
+            <Field label="Monthly Rent (₱)" id="edit-rent" name="rent_amount" type="number" defaultValue={String(tenant.rent_amount)} min="1" step="0.01" required />
           </div>
 
           <div>
             <label
-              htmlFor="due_day"
+              htmlFor="edit-due-day"
               style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
             >
               Rent Due Day (1–31)
             </label>
-            <select id="due_day" name="due_day" className="input" required defaultValue="1" style={{ padding: "0.6rem 0.8rem" }}>
+            <select id="edit-due-day" name="due_day" className="input" defaultValue={tenant.due_day}>
               {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
                 <option key={d} value={d} style={{ background: "#1e2535" }}>
                   Day {d}
@@ -113,7 +115,7 @@ export default function AddTenantModal({ isOpen, onClose, onSuccess }: AddTenant
             </div>
           )}
 
-          <div style={{ display: "flex", gap: "0.75rem", padding: "0.5rem 0 0.25rem" }}>
+          <div style={{ display: "flex", gap: "0.75rem", paddingTop: "0.5rem" }}>
             <button
               type="button"
               onClick={onClose}
@@ -123,13 +125,13 @@ export default function AddTenantModal({ isOpen, onClose, onSuccess }: AddTenant
               Cancel
             </button>
             <button
-              id="submit-new-tenant"
+              id="submit-edit-tenant"
               type="submit"
               disabled={pending}
               className="btn btn-primary"
               style={{ flex: 2 }}
             >
-              {pending ? "Creating…" : "Create Tenant"}
+              {pending ? "Saving…" : "Save Changes"}
             </button>
           </div>
         </form>
@@ -143,7 +145,7 @@ function Field({
   id,
   name,
   type = "text",
-  placeholder,
+  defaultValue,
   required,
   min,
   step,
@@ -152,7 +154,7 @@ function Field({
   id: string;
   name: string;
   type?: string;
-  placeholder?: string;
+  defaultValue?: string;
   required?: boolean;
   min?: string;
   step?: string;
@@ -169,7 +171,7 @@ function Field({
         id={id}
         name={name}
         type={type}
-        placeholder={placeholder}
+        defaultValue={defaultValue}
         required={required}
         min={min}
         step={step}

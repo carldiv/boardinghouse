@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { formatPeso, type TenantRow, type PaymentRow } from "@/lib/utils";
 import DeleteTenantButton from "./DeleteTenantButton";
 import AddTenantModal from "./AddTenantModal";
 import ViewTenantModal from "./ViewTenantModal";
+import EditTenantModal from "./EditTenantModal";
 import { useRouter } from "next/navigation";
 
 interface TenantsTableProps {
@@ -17,6 +17,7 @@ export default function TenantsTable({ tenants, allPayments }: TenantsTableProps
   const router = useRouter();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   
   const [selectedTenant, setSelectedTenant] = useState<TenantRow | null>(null);
   const [selectedPayments, setSelectedPayments] = useState<PaymentRow[]>([]);
@@ -33,6 +34,16 @@ export default function TenantsTable({ tenants, allPayments }: TenantsTableProps
     setIsViewOpen(false);
     setSelectedTenant(null);
     setSelectedPayments([]);
+  }
+
+  function handleOpenEdit(tenant: TenantRow) {
+    setSelectedTenant(tenant);
+    setIsEditOpen(true);
+  }
+
+  function handleCloseEdit() {
+    setIsEditOpen(false);
+    setSelectedTenant(null);
   }
 
   return (
@@ -106,12 +117,12 @@ export default function TenantsTable({ tenants, allPayments }: TenantsTableProps
                     >
                       View
                     </button>
-                    <Link
-                      href={`/admin/tenants/${tenant.id}`}
+                    <button
+                      onClick={() => handleOpenEdit(tenant)}
                       className="btn btn-ghost btn-sm"
                     >
                       Edit
-                    </Link>
+                    </button>
                     <DeleteTenantButton tenantId={tenant.id} tenantName={tenant.name} />
                   </div>
                 </td>
@@ -132,12 +143,26 @@ export default function TenantsTable({ tenants, allPayments }: TenantsTableProps
       />
 
       {/* View Tenant Modal */}
-      {selectedTenant && (
+      {selectedTenant && isViewOpen && (
         <ViewTenantModal
           tenant={selectedTenant}
           payments={selectedPayments}
           isOpen={isViewOpen}
           onClose={handleCloseView}
+        />
+      )}
+
+      {/* Edit Tenant Modal */}
+      {selectedTenant && isEditOpen && (
+        <EditTenantModal
+          tenant={selectedTenant}
+          isOpen={isEditOpen}
+          onClose={handleCloseEdit}
+          onSuccess={() => {
+            setIsEditOpen(false);
+            setSelectedTenant(null);
+            router.refresh();
+          }}
         />
       )}
     </>
