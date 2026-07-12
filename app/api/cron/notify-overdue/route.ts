@@ -14,6 +14,14 @@ async function handleRequest(request: NextRequest) {
   
   // Protect with CRON_SECRET if defined
   const cronSecret = process.env.CRON_SECRET;
+  
+  // Diagnostic logs (visible in Vercel Logs)
+  console.log("[DEBUG CRON] CRON_SECRET length on Vercel:", cronSecret ? cronSecret.length : 0);
+  console.log("[DEBUG CRON] Authorization Header present:", !!authHeader);
+  if (authHeader && cronSecret) {
+    console.log("[DEBUG CRON] Token match:", authHeader === `Bearer ${cronSecret}`);
+  }
+
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
