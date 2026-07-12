@@ -55,10 +55,11 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const role = await getRole();
+  // Run both checks in parallel instead of sequentially — this was
+  // doubling latency on every single nav click before.
+  const [role, session] = await Promise.all([getRole(), getSession()]);
   if (role !== "admin") redirect("/login");
 
-  const session = await getSession();
   const adminEmail = session?.user?.email ?? "Admin";
 
   return (
