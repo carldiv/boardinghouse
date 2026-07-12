@@ -343,6 +343,21 @@ tbody tr:hover {
   border-color: #6366f1;
 }
 
+.form-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.receipt-upload-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
 /* History cards */
 .dashboard-shell .history-card {
   background: #1e2535;
