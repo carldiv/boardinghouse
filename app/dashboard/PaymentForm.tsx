@@ -19,6 +19,8 @@ export default function PaymentForm({
 }: PaymentFormProps) {
   const [state, action, pending] = useActionState(submitPayment, undefined);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanStatus, setScanStatus] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   // We want to default to the oldest unpaid month (remainingAmount > 0)
@@ -74,11 +76,80 @@ export default function PaymentForm({
     }
   }, [state]);
 
+  const scanReceipt = async (file: File) => {
+    setIsScanning(true);
+    setScanStatus("Initializing OCR scanner...");
+    try {
+      const { createWorker } = await import("tesseract.js");
+      const worker = await createWorker("eng");
+      
+      setScanStatus("Scanning receipt image...");
+      const { data: { text } } = await worker.recognize(file);
+      await worker.terminate();
+
+      setScanStatus("Parsing details...");
+
+      // GCash reference number regex: match a 13-digit number (can contain spaces/dashes)
+      const refRegex = /\b\d[\d\s-]{11,18}\d\b/g;
+      const matches = text.match(refRegex);
+      let foundRef = false;
+      if (matches) {
+        for (const match of matches) {
+          const cleaned = match.replace(/[\s-]/g, "");
+          if (cleaned.length === 13) {
+            const refInput = document.getElementById("ref_number") as HTMLInputElement;
+            if (refInput) {
+              refInput.value = cleaned;
+              foundRef = true;
+            }
+            break;
+          }
+        }
+      }
+
+      // GCash amount regex: looks for Amount: PHP X,XXX.XX or Sent PHP X,XXX.XX
+      const amountRegex = /(?:Amount|PHP|P)\s*[:\-\s]*([\d,]+\.\d{2})/i;
+      const amountMatch = text.match(amountRegex);
+      let foundAmount = false;
+      if (amountMatch) {
+        const cleanedAmount = amountMatch[1].replace(/,/g, "");
+        setAmountVal(cleanedAmount);
+        foundAmount = true;
+      } else {
+        const fallbackAmountRegex = /\b([\d,]+\.\d{2})\b/;
+        const fallbackMatch = text.match(fallbackAmountRegex);
+        if (fallbackMatch) {
+          const cleanedAmount = fallbackMatch[1].replace(/,/g, "");
+          setAmountVal(cleanedAmount);
+          foundAmount = true;
+        }
+      }
+
+      if (foundRef && foundAmount) {
+        setScanStatus("Receipt scanned! Amount and Reference Number autofilled.");
+      } else if (foundRef) {
+        setScanStatus("Receipt scanned! Reference Number autofilled. (Amount not found)");
+      } else if (foundAmount) {
+        setScanStatus("Receipt scanned! Amount autofilled. (Reference Number not found)");
+      } else {
+        setScanStatus("Receipt scanned, but no GCash details could be recognized.");
+      }
+      setTimeout(() => setScanStatus(null), 6000);
+    } catch (err) {
+      console.error("OCR Scan Error:", err);
+      setScanStatus("Scan failed. Please enter details manually.");
+      setTimeout(() => setScanStatus(null), 6000);
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
       setPreview(url);
+      scanReceipt(file);
     }
   }
 
@@ -206,6 +277,20 @@ export default function PaymentForm({
         </div>
       </div>
 
+      {scanStatus && (
+        <div className={`text-xs rounded-lg px-3 py-2 ${isScanning ? "bg-[rgba(99,102,241,0.1)] text-[#818cf8]" : "bg-[rgba(16,185,129,0.1)] text-[var(--color-status-paid)]"}`}>
+          <div className="flex items-center gap-2">
+            {isScanning && (
+              <svg className="animate-spin h-3.5 w-3.5 text-[#818cf8]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            )}
+            <span>{scanStatus}</span>
+          </div>
+        </div>
+      )}
+
       {state?.error && (
         <div className="rounded-lg bg-[rgba(239,68,68,0.1)] px-3 py-2 text-sm text-[var(--color-status-overdue)]">
           {state.error}
@@ -220,10 +305,10 @@ export default function PaymentForm({
       <button
         id="submit-payment-btn"
         type="submit"
-        disabled={pending}
+        disabled={pending || isScanning}
         className="btn btn-primary w-full py-3 uppercase tracking-wide"
       >
-        {pending ? "Submitting…" : "Submit Payment"}
+        {pending ? "Submitting…" : isScanning ? "Scanning Receipt…" : "Submit Payment"}
       </button>
     </form>
   );
