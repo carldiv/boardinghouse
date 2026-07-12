@@ -6,8 +6,7 @@ export const metadata = { title: "Tenants — BH Manager" };
 
 export default async function TenantsPage() {
   const supabase = await createSupabaseServerClient();
-  
-  // Fetch both tenants and payments in parallel
+
   const [{ data: tenantsData }, { data: paymentsData }] = await Promise.all([
     supabase.from("tenants").select("*").order("room"),
     supabase.from("payments").select("*").order("month", { ascending: false }),

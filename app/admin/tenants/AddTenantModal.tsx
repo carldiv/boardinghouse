@@ -29,6 +29,8 @@ export default function AddTenantModal({ isOpen, onClose, onSuccess }: AddTenant
         left: 0,
         right: 0,
         bottom: 0,
+        width: "100vw",
+        height: "100vh",
         zIndex: 9999,
         backgroundColor: "rgba(10, 14, 23, 0.88)",
         overflowY: "auto",
