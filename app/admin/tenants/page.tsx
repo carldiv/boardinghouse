@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { deleteTenant } from "@/actions/tenants";
 import { formatPeso, type TenantRow } from "@/lib/utils";
+import DeleteTenantButton from "./DeleteTenantButton";
 
 export const metadata = { title: "Tenants — BH Manager" };
 
@@ -81,20 +81,7 @@ export default async function TenantsPage() {
                     >
                       Edit
                     </Link>
-                    <form
-                      action={async () => {
-                        "use server";
-                        await deleteTenant(tenant.id);
-                      }}
-                    >
-                      <button
-                        id={`delete-tenant-${tenant.id}`}
-                        type="submit"
-                        className="btn btn-danger btn-sm"
-                      >
-                        Delete
-                      </button>
-                    </form>
+                    <DeleteTenantButton tenantId={tenant.id} tenantName={tenant.name} />
                   </div>
                 </td>
               </tr>
