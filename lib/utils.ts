@@ -38,18 +38,31 @@ export interface MonthLedger {
   remainingAmount: number;
 }
 
-/**
- * Generates an array of month ISO strings YYYY-MM-01 from tenant registration month to now + 2 months (future)
- */
 export function getTenantMonthsRange(createdAt?: string | null, now: Date = new Date()): string[] {
   const months: string[] = [];
-  const startDate = createdAt ? new Date(createdAt) : new Date(now.getFullYear(), now.getMonth() - 11, 1);
   
-  const startYear = startDate.getFullYear();
-  const startMonth = startDate.getMonth();
+  const currentYear = now.getFullYear();
+  let startYear = currentYear;
+  let startMonth = 0; // Always start from January of the current year
 
-  const endYear = now.getFullYear();
-  const endMonth = now.getMonth() + 2;
+  if (createdAt) {
+    const regDate = new Date(createdAt);
+    // If the tenant registered in a previous year, start from their registration month
+    if (regDate.getFullYear() < startYear) {
+      startYear = regDate.getFullYear();
+      startMonth = regDate.getMonth();
+    }
+  }
+
+  let endYear = currentYear;
+  let endMonth = 11; // Always end at December of the current year
+
+  // Also include up to 2 months in advance for advance payments
+  const advanceDate = new Date(now.getFullYear(), now.getMonth() + 2, 1);
+  if (advanceDate.getFullYear() > endYear) {
+    endYear = advanceDate.getFullYear();
+    endMonth = advanceDate.getMonth();
+  }
 
   let currYear = startYear;
   let currMonth = startMonth;
