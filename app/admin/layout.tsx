@@ -214,15 +214,13 @@ export default async function AdminLayout({
           color: #818cf8;
         }
         
-        /* Modal overlay — covers full screen, flex-centers the card */
+        /* Modal overlay — covers main content area only (sidebar excluded on desktop) */
         .modal-overlay-container {
           position: fixed !important;
           top: 0 !important;
-          left: 0 !important;
+          left: 240px !important;
           right: 0 !important;
           bottom: 0 !important;
-          width: 100vw !important;
-          height: 100vh !important;
           z-index: 9999 !important;
           display: flex !important;
           align-items: center !important;
@@ -231,6 +229,13 @@ export default async function AdminLayout({
           backdrop-filter: blur(6px) !important;
           padding: 1.5rem !important;
           box-sizing: border-box !important;
+          overflow-y: auto !important;
+        }
+
+        @media (max-width: 768px) {
+          .modal-overlay-container {
+            left: 0 !important;
+          }
         }
 
         @media (max-width: 768px) {
