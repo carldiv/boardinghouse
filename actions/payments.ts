@@ -195,6 +195,30 @@ export async function confirmPayment(id: string) {
           timeZone: "Asia/Manila",
         });
 
+        const { data: monthPayments } = await supabase
+          .from("payments")
+          .select("amount")
+          .eq("tenant_id", tenant.id)
+          .eq("month", payment.month)
+          .eq("status", "confirmed");
+        
+        const totalPaid = monthPayments?.reduce((sum, p) => sum + p.amount, 0) || 0;
+        const remainingBalance = Math.max(0, tenant.rent_amount - totalPaid);
+        const remainingFormatted = new Intl.NumberFormat("en-PH", {
+          style: "currency",
+          currency: "PHP",
+        }).format(remainingBalance);
+
+        let remainingBalanceHtml = "";
+        if (remainingBalance > 0) {
+          remainingBalanceHtml = `
+                <tr>
+                  <td style="color: #64748b; padding: 12px 0 6px 0; border-top: 1px solid #e2e8f0;">Remaining Balance</td>
+                  <td style="font-weight: 700; text-align: right; padding: 12px 0 6px 0; color: #ef4444; border-top: 1px solid #e2e8f0;">${remainingFormatted}</td>
+                </tr>
+          `;
+        }
+
         const { sendEmail } = await import("@/lib/mail");
         
         const subject = `✅ Rent Payment Confirmed — Room ${tenant.room}`;
@@ -230,7 +254,7 @@ export async function confirmPayment(id: string) {
                 <tr>
                   <td style="color: #64748b; padding: 6px 0;">Date</td>
                   <td style="font-weight: 600; text-align: right; padding: 6px 0; color: #0f172a;">${dateFormatted}</td>
-                </tr>
+                </tr>${remainingBalanceHtml}
               </table>
             </div>
 
