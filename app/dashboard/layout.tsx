@@ -4,6 +4,7 @@ import { getRole, getTenantRow } from "@/lib/session";
 import { logout } from "@/actions/auth";
 import BottomNav from "./BottomNav";
 import SettingsMenu from "./SettingsMenu";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import IdleLogout from "@/lib/IdleLogout";
 
 export default async function TenantLayout({
@@ -50,7 +51,10 @@ export default async function TenantLayout({
           </div>
         </div>
 
-        <SettingsMenu logoutAction={logout} />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <SettingsMenu logoutAction={logout} />
+        </div>
       </header>
 
       <main className="dashboard-main">{children}</main>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getRole, getSession } from "@/lib/session";
 import { logout } from "@/actions/auth";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navItems = [
   {
@@ -176,19 +177,22 @@ export default async function AdminLayout({
             </div>
           </div>
 
-          <form action={logout}>
-            <button
-              id="admin-logout"
-              type="submit"
-              className="btn btn-ghost"
-              style={{ width: "100%", fontSize: "0.8rem" }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Sign out
-            </button>
-          </form>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <form action={logout} style={{ flex: 1 }}>
+              <button
+                id="admin-logout"
+                type="submit"
+                className="btn btn-ghost"
+                style={{ width: "100%", fontSize: "0.8rem", padding: "0.5rem" }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ marginRight: "0.2rem" }}>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Sign out
+              </button>
+            </form>
+            <ThemeToggle />
+          </div>
         </div>
       </aside>
 
