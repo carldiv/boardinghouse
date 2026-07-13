@@ -5,6 +5,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getRole, getTenantRow } from "@/lib/session";
 import { toMonthISO } from "@/lib/utils";
+import { sendEmail } from "@/lib/mail";
 
 async function requireAdmin() {
   const role = await getRole();
@@ -82,6 +83,52 @@ export async function submitPayment(
   });
 
   if (error) return { error: error.message };
+
+  // Send admin notification
+  const adminEmail = process.env.GMAIL_USER;
+  if (adminEmail) {
+    try {
+      // Use local timezone for correct month parsing (date is stored as YYYY-MM-01)
+      const dateParts = monthISO.split("-");
+      const monthDate = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, 1);
+      const monthLabel = monthDate.toLocaleDateString("en-PH", { month: "long", year: "numeric" });
+      const amountFormatted = new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(amount);
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+      await sendEmail({
+        to: adminEmail,
+        subject: `💳 New Payment: ${tenant.name} (Room ${tenant.room})`,
+        text: `${tenant.name} submitted a payment of ${amountFormatted} for ${monthLabel}.\nRef: ${ref_number}\n\nPlease review it at ${appUrl}/admin/payments`,
+        html: `
+          <div style="font-family: sans-serif; padding: 24px; border: 1px solid #e2e8f0; max-width: 500px; margin: 0 auto; border-radius: 12px;">
+            <h2 style="color: #0f172a; margin-top: 0;">New Payment Received</h2>
+            <p style="color: #475569; font-size: 15px;"><strong>${tenant.name}</strong> (Room ${tenant.room}) has submitted a new payment.</p>
+            <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0; border: 1px solid #f1f5f9; font-size: 14px;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Amount</td>
+                  <td style="font-weight: 700; text-align: right; color: #10b981;">${amountFormatted}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">For Month</td>
+                  <td style="font-weight: 600; text-align: right; color: #0f172a;">${monthLabel}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Ref Number</td>
+                  <td style="font-weight: 600; text-align: right; color: #0f172a;">${ref_number}</td>
+                </tr>
+              </table>
+            </div>
+            <div style="text-align: center; margin-top: 24px;">
+              <a href="${appUrl}/admin/payments" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px;">Review Payment</a>
+            </div>
+          </div>
+        `
+      });
+    } catch (e) {
+      console.error("Failed to send admin notification:", e);
+    }
+  }
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/payments");

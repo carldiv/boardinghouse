@@ -59,6 +59,9 @@ export async function notifyOverdueTenants(): Promise<{
   const results: NotificationResult[] = [];
   let successCount = 0;
 
+  // New: collect overdue tenants for admin summary
+  const overdueTenantsList: { name: string; room: string; amount: string; dueDay: number }[] = [];
+
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const currentMonthLabel = now.toLocaleDateString("en-PH", { month: "long", year: "numeric" });
 
@@ -68,6 +71,18 @@ export async function notifyOverdueTenants(): Promise<{
     if (status !== "overdue") {
       continue;
     }
+
+    const rentFormatted = new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+    }).format(tenant.rent_amount);
+
+    overdueTenantsList.push({
+      name: tenant.name,
+      room: tenant.room,
+      amount: rentFormatted,
+      dueDay: tenant.due_day,
+    });
 
     const email = tenant.auth_user_id ? usersMap.get(tenant.auth_user_id) : null;
 
@@ -83,10 +98,6 @@ export async function notifyOverdueTenants(): Promise<{
 
     try {
       const subject = `⚠️ Overdue Rent Notice — Room ${tenant.room}`;
-      const rentFormatted = new Intl.NumberFormat("en-PH", {
-        style: "currency",
-        currency: "PHP",
-      }).format(tenant.rent_amount);
 
       const html = `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #1e293b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
@@ -142,6 +153,57 @@ export async function notifyOverdueTenants(): Promise<{
         status: "error",
         message: err.message || "Failed to send email",
       });
+    }
+  }
+
+  // Send admin summary
+  const adminEmail = process.env.GMAIL_USER;
+  if (adminEmail && overdueTenantsList.length > 0) {
+    try {
+      const rowsHtml = overdueTenantsList
+        .map(
+          (t) => `
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #0f172a;"><strong>${t.name}</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #475569;">${t.room}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #ef4444; font-weight: 600;">${t.amount}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #475569;">Day ${t.dueDay}</td>
+        </tr>
+      `
+        )
+        .join("");
+
+      await sendEmail({
+        to: adminEmail,
+        subject: `⚠️ Overdue Tenants Summary - ${currentMonthLabel}`,
+        text: `There are ${overdueTenantsList.length} overdue tenants for ${currentMonthLabel}. Please check the dashboard.`,
+        html: `
+          <div style="font-family: sans-serif; padding: 24px; border: 1px solid #e2e8f0; max-width: 600px; margin: 0 auto; border-radius: 12px;">
+            <h2 style="color: #0f172a; margin-top: 0;">Overdue Tenants Summary</h2>
+            <p style="color: #475569; font-size: 15px;">The following <strong>${overdueTenantsList.length}</strong> tenants are currently overdue for <strong>${currentMonthLabel}</strong>:</p>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; text-align: left;">
+              <thead>
+                <tr style="background-color: #f8fafc;">
+                  <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; color: #64748b;">Tenant</th>
+                  <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; color: #64748b;">Room</th>
+                  <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; color: #64748b;">Rent</th>
+                  <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; color: #64748b;">Due Day</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+            
+            <div style="text-align: center; margin-top: 24px;">
+              <a href="${appUrl}/admin/dashboard" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px;">View Dashboard</a>
+            </div>
+          </div>
+        `,
+      });
+    } catch (err) {
+      console.error("Failed to send admin overdue summary:", err);
     }
   }
 
