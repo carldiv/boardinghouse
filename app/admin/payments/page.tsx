@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { formatPeso, formatMonth, formatDate, type TenantRow, type PaymentRow } from "@/lib/utils";
-import { confirmPayment } from "@/actions/payments";
 import RejectModal from "./RejectModal";
+import PaymentActions from "./PaymentActions";
 import Image from "next/image";
 
 export const metadata = { title: "Payments — BH Manager" };
@@ -164,29 +164,10 @@ export default async function PaymentsPage({
                   <td style={{ fontSize: "0.8rem", color: "#64748b" }}>{formatDate(payment.submitted_at)}</td>
                   <td>
                     {payment.status === "pending" && (
-                      <div style={{ display: "flex", gap: "0.4rem" }}>
-                        <form
-                          action={async () => {
-                            "use server";
-                            await confirmPayment(payment.id);
-                          }}
-                        >
-                          <button
-                            id={`confirm-payment-${payment.id}`}
-                            type="submit"
-                            className="btn btn-success btn-sm"
-                          >
-                            ✓
-                          </button>
-                        </form>
-                        <a
-                          href={`/admin/payments?status=${status}&reject=${payment.id}`}
-                          className="btn btn-danger btn-sm"
-                          style={{ display: "flex", alignItems: "center", textDecoration: "none" }}
-                        >
-                          ✗
-                        </a>
-                      </div>
+                      <PaymentActions
+                        paymentId={payment.id}
+                        rejectHref={`/admin/payments?status=${status}&reject=${payment.id}`}
+                      />
                     )}
                   </td>
                 </tr>
