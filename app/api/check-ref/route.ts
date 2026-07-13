@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 // GET /api/check-ref?ref=<ref_number>&excludeId=<payment_id>
 // Returns { duplicate: boolean, status?: string }
@@ -12,9 +12,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ duplicate: false });
   }
 
-  const supabase = await createSupabaseServerClient();
+  const adminClient = createSupabaseAdminClient();
 
-  let query = supabase
+  let query = adminClient
     .from("payments")
     .select("id, status, tenant_id, month")
     .eq("ref_number", ref)

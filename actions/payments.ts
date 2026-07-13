@@ -58,8 +58,9 @@ export async function submitPayment(
     receipt_url = urlData.publicUrl;
   }
 
-  // Block duplicate GCash reference numbers (exclude rejected payments)
-  const { data: existing } = await supabase
+  // Block duplicate GCash reference numbers globally (bypass RLS)
+  const adminClient = createSupabaseAdminClient();
+  const { data: existing } = await adminClient
     .from("payments")
     .select("id")
     .eq("ref_number", ref_number)
