@@ -52,7 +52,7 @@ export default function RentStatusCard({
     <div
       className="card glow-pulse"
       style={{
-        background: `linear-gradient(135deg, ${cfg.bg}, rgba(22,27,39,0.9))`,
+        background: `linear-gradient(135deg, ${cfg.bg}, var(--surface-1))`,
         border: `1px solid ${cfg.border}`,
       }}
     >
