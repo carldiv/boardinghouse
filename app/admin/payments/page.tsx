@@ -11,9 +11,9 @@ type Filter = "all" | "pending" | "confirmed" | "rejected";
 export default async function PaymentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; reject?: string }>;
+  searchParams: Promise<{ status?: string; reject?: string; page?: string }>;
 }) {
-  const { status = "all", reject } = await searchParams;
+  const { status = "all", reject, page = "1" } = await searchParams;
   const supabase = await createSupabaseServerClient();
 
   const [{ data: paymentsRaw }, { data: tenantsRaw }] = await Promise.all([
@@ -37,6 +37,12 @@ export default async function PaymentsPage({
 
   const filtered =
     status === "all" ? payments : payments.filter((p) => p.status === status);
+
+  const currentPage = parseInt(page, 10) || 1;
+  const pageSize = 10;
+  const totalItems = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const rejectPayment = reject ? payments.find((p) => p.id === reject) : null;
   const rejectTenant = rejectPayment ? tenantMap[rejectPayment.tenant_id] : null;
@@ -112,14 +118,14 @@ export default async function PaymentsPage({
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 && (
+            {paginated.length === 0 && (
               <tr>
                 <td colSpan={9} style={{ textAlign: "center", padding: "3rem", color: "var(--text-muted)" }}>
                   No payments found.
                 </td>
               </tr>
             )}
-            {filtered.map((payment) => {
+            {paginated.map((payment) => {
               const tenant = tenantMap[payment.tenant_id];
               return (
                 <tr key={payment.id}>
@@ -203,6 +209,30 @@ export default async function PaymentsPage({
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1.5rem" }}>
+          <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: 0 }}>
+            Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalItems)} of {totalItems} payments
+          </p>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <a
+              href={`/admin/payments?status=${status}${currentPage > 1 ? `&page=${currentPage - 1}` : ""}`}
+              className="btn btn-ghost btn-sm"
+              style={{ pointerEvents: currentPage === 1 ? "none" : "auto", opacity: currentPage === 1 ? 0.5 : 1, textDecoration: "none" }}
+            >
+              Previous
+            </a>
+            <a
+              href={`/admin/payments?status=${status}${currentPage < totalPages ? `&page=${currentPage + 1}` : `&page=${totalPages}`}`}
+              className="btn btn-ghost btn-sm"
+              style={{ pointerEvents: currentPage === totalPages ? "none" : "auto", opacity: currentPage === totalPages ? 0.5 : 1, textDecoration: "none" }}
+            >
+              Next
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* Reject modal */}
       {rejectPayment && rejectTenant && (
