@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState, useEffect, useRef } from "react";
+import Tesseract from "tesseract.js";
 import { submitPayment } from "@/actions/payments";
 import { formatMonth, formatPeso, type MonthLedger } from "@/lib/utils";
 
@@ -78,22 +79,18 @@ export default function PaymentForm({
 
   const scanReceipt = async (file: File) => {
     setIsScanning(true);
-    setScanStatus("Uploading receipt to Google Vision...");
+    setScanStatus("Reading receipt...");
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/ocr", {
-        method: "POST",
-        body: formData,
+      const { data } = await Tesseract.recognize(file, "eng", {
+        logger: (m) => {
+          if (m.status === "recognizing text") {
+            const pct = Math.round((m.progress ?? 0) * 100);
+            setScanStatus(`Scanning receipt… ${pct}%`);
+          }
+        },
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to scan receipt image");
-      }
-
       setScanStatus("Parsing details...");
-      const data = await res.json();
       const text = data.text || "";
 
       // GCash reference number regex: match a 13-digit number (can contain spaces/dashes)
@@ -144,7 +141,7 @@ export default function PaymentForm({
       }
       setTimeout(() => setScanStatus(null), 6000);
     } catch (err) {
-      console.error("OCR Scan Error:", err);
+      console.error("Tesseract OCR Error:", err);
       setScanStatus("Scan failed. Please enter details manually.");
       setTimeout(() => setScanStatus(null), 6000);
     } finally {
