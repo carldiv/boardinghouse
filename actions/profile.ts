@@ -29,6 +29,7 @@ export async function updateProfile(
     // 1. Update auth metadata and email
     const updateData: any = {
       email,
+      email_confirm: true,
       user_metadata: {
         ...session.user.user_metadata,
         name,
@@ -53,7 +54,7 @@ export async function updateProfile(
 
     // 2. If user is a tenant, sync name in tenants table
     if (isTenant) {
-      const { error: dbError } = await supabase
+      const { error: dbError } = await adminClient
         .from("tenants")
         .update({ name })
         .eq("auth_user_id", session.user.id);
