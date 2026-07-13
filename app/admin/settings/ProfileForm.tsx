@@ -26,7 +26,7 @@ export default function ProfileForm({ initialName, initialEmail }: ProfileFormPr
           name="name"
           type="text"
           defaultValue={initialName}
-          placeholder="Admin Name"
+          placeholder="e.g. Juan dela Cruz"
           className="input"
           required
         />
