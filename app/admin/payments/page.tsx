@@ -26,6 +26,15 @@ export default async function PaymentsPage({
 
   const tenantMap = Object.fromEntries(tenants.map((t) => [t.id, t]));
 
+  // Build a set of ref numbers that appear more than once (excluding rejected)
+  const refCounts: Record<string, number> = {};
+  for (const p of payments) {
+    if (p.status !== "rejected") {
+      refCounts[p.ref_number] = (refCounts[p.ref_number] ?? 0) + 1;
+    }
+  }
+  const duplicateRefs = new Set(Object.keys(refCounts).filter((r) => refCounts[r] > 1));
+
   const filtered =
     status === "all" ? payments : payments.filter((p) => p.status === status);
 
@@ -150,7 +159,25 @@ export default async function PaymentsPage({
                       return formatPeso(remaining);
                     })()}
                   </td>
-                  <td style={{ fontSize: "0.85rem", color: "#94a3b8", fontFamily: "monospace" }}>{payment.ref_number}</td>
+                  <td style={{ fontSize: "0.85rem", color: "#94a3b8", fontFamily: "monospace" }}>
+                    {payment.ref_number}
+                    {duplicateRefs.has(payment.ref_number) && (
+                      <span style={{
+                        marginLeft: "0.4rem",
+                        background: "rgba(239,68,68,0.15)",
+                        color: "#ef4444",
+                        fontSize: "0.68rem",
+                        fontWeight: 700,
+                        padding: "0.1rem 0.4rem",
+                        borderRadius: "0.3rem",
+                        border: "1px solid rgba(239,68,68,0.3)",
+                        fontFamily: "sans-serif",
+                        letterSpacing: "0.02em",
+                      }}>
+                        ⚠ DUPLICATE
+                      </span>
+                    )}
+                  </td>
                   <td>
                     <span className={`badge badge-${payment.status === "confirmed" ? "confirmed" : payment.status === "rejected" ? "rejected" : "pending"}`}>
                       {payment.status}

@@ -24,6 +24,12 @@ export default function PaymentForm({
   const [scanStatus, setScanStatus] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
+  // Ref number state + duplicate check
+  const [refNumber, setRefNumber] = useState("");
+  const [refDuplicate, setRefDuplicate] = useState(false);
+  const [refChecking, setRefChecking] = useState(false);
+  const refDebounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // We want to default to the oldest unpaid month (remainingAmount > 0)
   // If all are paid, default to the current month or first month
   const getInitialMonth = () => {
@@ -73,9 +79,37 @@ export default function PaymentForm({
     if (state?.success) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreview(null);
+      setRefNumber("");
+      setRefDuplicate(false);
       formRef.current?.reset();
     }
   }, [state]);
+
+  const checkRefDuplicate = (value: string) => {
+    if (refDebounceTimer.current) clearTimeout(refDebounceTimer.current);
+    if (!value || value.length < 5) {
+      setRefDuplicate(false);
+      setRefChecking(false);
+      return;
+    }
+    setRefChecking(true);
+    refDebounceTimer.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/check-ref?ref=${encodeURIComponent(value)}`);
+        const json = await res.json();
+        setRefDuplicate(json.duplicate === true);
+      } catch {
+        setRefDuplicate(false);
+      } finally {
+        setRefChecking(false);
+      }
+    }, 600);
+  };
+
+  const handleRefChange = (value: string) => {
+    setRefNumber(value);
+    checkRefDuplicate(value);
+  };
 
   const scanReceipt = async (file: File) => {
     setIsScanning(true);
@@ -105,6 +139,7 @@ export default function PaymentForm({
             const refInput = document.getElementById("ref_number") as HTMLInputElement;
             if (refInput) {
               refInput.value = cleaned;
+              handleRefChange(cleaned);
               foundRef = true;
             }
             break;
@@ -208,14 +243,53 @@ export default function PaymentForm({
         <label htmlFor="ref_number" className="form-label">
           Reference Number
         </label>
-        <input
-          id="ref_number"
-          name="ref_number"
-          type="text"
-          placeholder="Enter GCash Ref No."
-          required
-          className="input"
-        />
+        <div style={{ position: "relative" }}>
+          <input
+            id="ref_number"
+            name="ref_number"
+            type="text"
+            placeholder="Enter GCash Ref No."
+            required
+            className="input"
+            value={refNumber}
+            onChange={(e) => handleRefChange(e.target.value)}
+            style={{
+              borderColor: refDuplicate ? "#ef4444" : undefined,
+              paddingRight: refChecking || refDuplicate ? "2.5rem" : undefined,
+              transition: "border-color 0.2s",
+            }}
+          />
+          {/* Status icon inside input */}
+          {(refChecking || (refNumber.length >= 5 && !refChecking)) && (
+            <span style={{
+              position: "absolute",
+              right: "0.75rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+              fontSize: "1rem",
+              pointerEvents: "none",
+            }}>
+              {refChecking ? "⏳" : refDuplicate ? "⚠️" : "✅"}
+            </span>
+          )}
+        </div>
+        {/* Duplicate warning banner */}
+        {refDuplicate && (
+          <div style={{
+            marginTop: "0.4rem",
+            padding: "0.5rem 0.75rem",
+            background: "rgba(239,68,68,0.1)",
+            border: "1px solid rgba(239,68,68,0.35)",
+            borderRadius: "0.5rem",
+            color: "#ef4444",
+            fontSize: "0.8rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.4rem",
+          }}>
+            ⚠️ This reference number has already been submitted. Please double-check your GCash receipt.
+          </div>
+        )}
       </div>
 
       <div>
@@ -310,10 +384,10 @@ export default function PaymentForm({
       <button
         id="submit-payment-btn"
         type="submit"
-        disabled={pending || isScanning}
+        disabled={pending || isScanning || refDuplicate || refChecking}
         className="btn btn-primary w-full py-3 uppercase tracking-wide"
       >
-        {pending ? "Submitting…" : isScanning ? "Scanning Receipt…" : "Submit Payment"}
+        {pending ? "Submitting…" : isScanning ? "Scanning Receipt…" : refChecking ? "Checking ref…" : refDuplicate ? "⚠ Duplicate Ref Number" : "Submit Payment"}
       </button>
     </form>
   );

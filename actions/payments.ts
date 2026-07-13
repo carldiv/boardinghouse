@@ -57,6 +57,21 @@ export async function submitPayment(
     receipt_url = urlData.publicUrl;
   }
 
+  // Block duplicate GCash reference numbers (exclude rejected payments)
+  const { data: existing } = await supabase
+    .from("payments")
+    .select("id")
+    .eq("ref_number", ref_number)
+    .neq("status", "rejected")
+    .limit(1);
+
+  if (existing && existing.length > 0) {
+    return {
+      error:
+        "This GCash reference number has already been submitted. Please check your reference number or contact the admin if you believe this is correct.",
+    };
+  }
+
   const { error } = await supabase.from("payments").insert({
     tenant_id: tenant.id,
     month: monthISO,
