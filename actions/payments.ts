@@ -93,6 +93,7 @@ export async function submitPayment(
       const monthDate = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, 1);
       const monthLabel = monthDate.toLocaleDateString("en-PH", { month: "long", year: "numeric" });
       const amountFormatted = new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(amount);
+      const dateFormatted = new Date().toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric", timeZone: "Asia/Manila" });
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
       await sendEmail({
@@ -116,6 +117,10 @@ export async function submitPayment(
                 <tr>
                   <td style="color: #64748b; padding: 6px 0;">Ref Number</td>
                   <td style="font-weight: 600; text-align: right; color: #0f172a;">${ref_number}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Date</td>
+                  <td style="font-weight: 600; text-align: right; color: #0f172a;">${dateFormatted}</td>
                 </tr>
               </table>
             </div>
@@ -182,6 +187,13 @@ export async function confirmPayment(id: string) {
           style: "currency",
           currency: "PHP",
         }).format(payment.amount);
+        
+        const dateFormatted = new Date().toLocaleDateString("en-PH", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          timeZone: "Asia/Manila",
+        });
 
         const { sendEmail } = await import("@/lib/mail");
         
@@ -214,6 +226,10 @@ export async function confirmPayment(id: string) {
                 <tr>
                   <td style="color: #64748b; padding: 6px 0;">Ref Number</td>
                   <td style="font-weight: 600; text-align: right; padding: 6px 0; color: #0f172a;">${payment.ref_number}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Date</td>
+                  <td style="font-weight: 600; text-align: right; padding: 6px 0; color: #0f172a;">${dateFormatted}</td>
                 </tr>
               </table>
             </div>
@@ -292,6 +308,13 @@ export async function rejectPayment(
           style: "currency",
           currency: "PHP",
         }).format(payment.amount);
+        
+        const dateFormatted = new Date().toLocaleDateString("en-PH", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          timeZone: "Asia/Manila",
+        });
 
         const { sendEmail } = await import("@/lib/mail");
         
@@ -324,6 +347,10 @@ export async function rejectPayment(
                 <tr>
                   <td style="color: #64748b; padding: 6px 0;">Note from Admin</td>
                   <td style="font-weight: 600; text-align: right; padding: 6px 0; color: #dc2626;">${admin_note || "No explanation provided"}</td>
+                </tr>
+                <tr>
+                  <td style="color: #64748b; padding: 6px 0;">Date</td>
+                  <td style="font-weight: 600; text-align: right; padding: 6px 0; color: #0f172a;">${dateFormatted}</td>
                 </tr>
               </table>
             </div>
