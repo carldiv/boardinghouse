@@ -135,11 +135,16 @@ export default function PaymentForm({
       if (matches) {
         for (const match of matches) {
           const cleaned = match.replace(/[\s-]/g, "");
-          if (cleaned.length === 13) {
+          // GCash reference is exactly 13 digits.
+          // Sometimes the copy button icon next to it in screenshots is read as a digit
+          // (e.g. '0' or '8'), resulting in a cleaned length of 14 or more.
+          // We take the first 13 digits if the cleaned match contains at least 13 digits.
+          if (cleaned.length >= 13) {
+            const finalRef = cleaned.substring(0, 13);
             const refInput = document.getElementById("ref_number") as HTMLInputElement;
             if (refInput) {
-              refInput.value = cleaned;
-              handleRefChange(cleaned);
+              refInput.value = finalRef;
+              handleRefChange(finalRef);
               foundRef = true;
             }
             break;
