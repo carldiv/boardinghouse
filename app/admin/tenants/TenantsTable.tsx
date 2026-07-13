@@ -38,8 +38,8 @@ export default function TenantsTable({ tenants }: TenantsTableProps) {
     <>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
         <div>
-          <h1 style={{ fontSize: "1.6rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>Tenants</h1>
-          <p style={{ color: "#64748b", marginTop: "0.25rem", fontSize: "0.9rem" }}>
+          <h1 style={{ fontSize: "1.6rem", fontWeight: 700, margin: 0, color: "var(--text-primary)" }}>Tenants</h1>
+          <p style={{ color: "var(--text-muted)", marginTop: "0.25rem", fontSize: "0.9rem" }}>
             {tenants.length} tenant{tenants.length !== 1 ? "s" : ""} registered
           </p>
         </div>
@@ -77,9 +77,9 @@ export default function TenantsTable({ tenants }: TenantsTableProps) {
           <tbody>
             {tenants.length === 0 && (
               <tr>
-                <td colSpan={6} style={{ textAlign: "center", padding: "3rem", color: "#475569" }}>
+                <td colSpan={6} style={{ textAlign: "center", padding: "3rem", color: "var(--text-muted)" }}>
                   No tenants yet.{" "}
-                  <Link href="/admin/tenants/add" style={{ color: "#818cf8", textDecoration: "underline" }}>
+                  <Link href="/admin/tenants/add" style={{ color: "var(--color-brand-500)", textDecoration: "underline" }}>
                     Add your first tenant →
                   </Link>
                 </td>
@@ -92,7 +92,7 @@ export default function TenantsTable({ tenants }: TenantsTableProps) {
 
               return (
                 <tr key={tenant.id}>
-                  <td style={{ fontWeight: 600, color: "#e2e8f0" }}>{tenant.name}</td>
+                  <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{tenant.name}</td>
                   <td>{tenant.room}</td>
                   <td>{formatPeso(tenant.rent_amount)}</td>
                   <td>Day {tenant.due_day}</td>

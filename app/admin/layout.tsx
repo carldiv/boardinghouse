@@ -68,8 +68,8 @@ export default async function AdminLayout({
       <aside
         style={{
           width: "240px",
-          background: "#161b27",
-          borderRight: "1px solid #263044",
+          background: "var(--surface-1)",
+          borderRight: "1px solid var(--border)",
           display: "flex",
           flexDirection: "column",
           position: "fixed",
@@ -85,7 +85,7 @@ export default async function AdminLayout({
         <div
           style={{
             padding: "1.5rem",
-            borderBottom: "1px solid #263044",
+            borderBottom: "1px solid var(--border)",
             display: "flex",
             alignItems: "center",
             gap: "0.75rem",
@@ -113,7 +113,7 @@ export default async function AdminLayout({
             <div className="gradient-text" style={{ fontWeight: 700, fontSize: "0.95rem" }}>
               BH Manager
             </div>
-            <div style={{ fontSize: "0.7rem", color: "#475569" }}>Admin</div>
+            <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>Admin</div>
           </div>
         </div>
 
@@ -129,7 +129,7 @@ export default async function AdminLayout({
                 gap: "0.75rem",
                 padding: "0.65rem 0.85rem",
                 borderRadius: "0.6rem",
-                color: "#64748b",
+                color: "var(--text-muted)",
                 textDecoration: "none",
                 fontSize: "0.88rem",
                 fontWeight: 500,
@@ -148,7 +148,7 @@ export default async function AdminLayout({
         <div
           style={{
             padding: "1rem",
-            borderTop: "1px solid #263044",
+            borderTop: "1px solid var(--border)",
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.75rem" }}>
@@ -170,10 +170,10 @@ export default async function AdminLayout({
               {adminEmail[0].toUpperCase()}
             </div>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "#cbd5e1", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {adminEmail}
               </div>
-              <div style={{ fontSize: "0.68rem", color: "#475569" }}>Administrator</div>
+              <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>Administrator</div>
             </div>
           </div>
 
@@ -212,7 +212,7 @@ export default async function AdminLayout({
       <style>{`
         .admin-nav-link:hover {
           background: rgba(99,102,241,0.1);
-          color: #818cf8;
+          color: var(--color-brand-500);
         }
         
         /* Modal overlay — covers main content area, scrolls if card is tall */

@@ -51,10 +51,10 @@ export default async function PaymentsPage({
   return (
     <div className="animate-in" style={{ maxWidth: "1100px" }}>
       <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "1.6rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>
+        <h1 style={{ fontSize: "1.6rem", fontWeight: 700, margin: 0, color: "var(--text-primary)" }}>
           Payments
         </h1>
-        <p style={{ color: "#64748b", marginTop: "0.25rem", fontSize: "0.9rem" }}>
+        <p style={{ color: "var(--text-muted)", marginTop: "0.25rem", fontSize: "0.9rem" }}>
           {filtered.length} payment{filtered.length !== 1 ? "s" : ""}
         </p>
       </div>
@@ -65,10 +65,10 @@ export default async function PaymentsPage({
           display: "flex",
           gap: "0.5rem",
           marginBottom: "1.5rem",
-          background: "#161b27",
+          background: "var(--surface-1)",
           padding: "0.35rem",
           borderRadius: "0.75rem",
-          border: "1px solid #263044",
+          border: "1px solid var(--border)",
           width: "fit-content",
         }}
       >
@@ -87,7 +87,7 @@ export default async function PaymentsPage({
                 fontWeight: 600,
                 transition: "all 0.15s",
                 background: isActive ? "linear-gradient(135deg, #6366f1, #4f46e5)" : "transparent",
-                color: isActive ? "#fff" : "#64748b",
+                color: isActive ? "#fff" : "var(--text-muted)",
               }}
             >
               {tab.label} ({count})
@@ -114,7 +114,7 @@ export default async function PaymentsPage({
           <tbody>
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={9} style={{ textAlign: "center", padding: "3rem", color: "#475569" }}>
+                <td colSpan={9} style={{ textAlign: "center", padding: "3rem", color: "var(--text-muted)" }}>
                   No payments found.
                 </td>
               </tr>
@@ -131,25 +131,25 @@ export default async function PaymentsPage({
                           alt="Receipt"
                           width={40}
                           height={50}
-                          style={{ borderRadius: "4px", objectFit: "cover", border: "1px solid #263044" }}
+                          style={{ borderRadius: "4px", objectFit: "cover", border: "1px solid var(--border)" }}
                         />
                       </a>
                     ) : (
-                      <span style={{ color: "#475569", fontSize: "0.75rem" }}>—</span>
+                      <span style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>—</span>
                     )}
                   </td>
                   <td>
-                    <div style={{ fontWeight: 600, color: "#e2e8f0" }}>{tenant?.name ?? "—"}</div>
-                    <div style={{ fontSize: "0.75rem", color: "#64748b" }}>Room {tenant?.room}</div>
+                    <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{tenant?.name ?? "—"}</div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Room {tenant?.room}</div>
                   </td>
                   <td>{formatMonth(payment.month)}</td>
-                  <td style={{ fontWeight: 600, color: "#10b981" }}>{formatPeso(payment.amount)}</td>
+                  <td style={{ fontWeight: 600, color: "var(--color-success)" }}>{formatPeso(payment.amount)}</td>
                   <td style={{ fontWeight: 600, color: (() => {
                     const confirmedTotal = payments
                       .filter((p) => p.tenant_id === payment.tenant_id && p.month === payment.month && p.status === "confirmed")
                       .reduce((sum, p) => sum + p.amount, 0);
                     const remaining = tenant ? Math.max(0, tenant.rent_amount - confirmedTotal) : 0;
-                    return remaining === 0 ? "#10b981" : "#f43f5e";
+                    return remaining === 0 ? "var(--color-success)" : "#f43f5e";
                   })() }}>
                     {(() => {
                       const confirmedTotal = payments
@@ -159,13 +159,13 @@ export default async function PaymentsPage({
                       return formatPeso(remaining);
                     })()}
                   </td>
-                  <td style={{ fontSize: "0.85rem", color: "#94a3b8", fontFamily: "monospace" }}>
+                  <td style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontFamily: "monospace" }}>
                     {payment.ref_number}
                     {duplicateRefs.has(payment.ref_number) && (
                       <span style={{
                         marginLeft: "0.4rem",
                         background: "rgba(239,68,68,0.15)",
-                        color: "#ef4444",
+                        color: "var(--color-danger)",
                         fontSize: "0.68rem",
                         fontWeight: 700,
                         padding: "0.1rem 0.4rem",
@@ -183,12 +183,12 @@ export default async function PaymentsPage({
                       {payment.status}
                     </span>
                     {payment.admin_note && (
-                      <div style={{ fontSize: "0.72rem", color: "#64748b", marginTop: "0.25rem" }}>
+                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "0.25rem" }}>
                         {payment.admin_note}
                       </div>
                     )}
                   </td>
-                  <td style={{ fontSize: "0.8rem", color: "#64748b" }}>{formatDate(payment.submitted_at)}</td>
+                  <td style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>{formatDate(payment.submitted_at)}</td>
                   <td>
                     {payment.status === "pending" && (
                       <PaymentActions

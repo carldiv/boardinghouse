@@ -21,7 +21,7 @@ export default async function EditTenantPage({ params }: { params: Promise<{ id:
       {/* Back link */}
       <Link
         href={`/admin/tenants/${id}`}
-        style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: "#64748b", fontSize: "0.9rem", marginBottom: "1.5rem", textDecoration: "none" }}
+        style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: "1.5rem", textDecoration: "none" }}
       >
         ← Back to Profile
       </Link>

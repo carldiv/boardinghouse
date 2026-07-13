@@ -11,13 +11,13 @@ export default function Loading() {
       </div>
       {/* Table skeleton */}
       <div style={card}>
-        <div style={{ display: "flex", gap: "1rem", padding: "0.75rem 0", borderBottom: "1px solid #263044" }}>
+        <div style={{ display: "flex", gap: "1rem", padding: "0.75rem 0", borderBottom: "1px solid var(--border)" }}>
           {["3rem","8rem","6rem","6rem","6rem","6rem","5rem","5rem","4rem"].map((w, i) => (
             <div key={i} style={skel(w, "0.75rem", "0")} />
           ))}
         </div>
         {[...Array(4)].map((_, i) => (
-          <div key={i} style={{ display: "flex", gap: "1rem", padding: "1.1rem 0", borderBottom: "1px solid #1e2535", alignItems: "center" }}>
+          <div key={i} style={{ display: "flex", gap: "1rem", padding: "1.1rem 0", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
             <div style={skel("3rem", "3.5rem", "0")} />
             <div style={skel("8rem", "1rem", "0")} />
             <div style={skel("6rem", "1rem", "0")} />
@@ -36,8 +36,8 @@ export default function Loading() {
 }
 
 const card: React.CSSProperties = {
-  background: "#161b27",
-  border: "1px solid #263044",
+  background: "var(--surface-1)",
+  border: "1px solid var(--border)",
   borderRadius: "0.75rem",
   padding: "0 1.5rem",
   overflowX: "auto",
@@ -47,7 +47,7 @@ function skel(width: string, height: string, marginTop: string): React.CSSProper
   return {
     width, height, marginTop, flexShrink: 0,
     borderRadius: "0.4rem",
-    background: "linear-gradient(90deg, #1e2535 25%, #263044 50%, #1e2535 75%)",
+    background: "linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%)",
     backgroundSize: "200% 100%",
     animation: "shimmer 1.5s infinite",
   };

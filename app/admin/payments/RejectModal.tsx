@@ -42,11 +42,11 @@ export default function RejectModal({
         className="card animate-in"
         style={{ maxWidth: "420px", width: "100%", padding: "2rem" }}
       >
-        <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#e8eaf0", margin: "0 0 0.5rem" }}>
+        <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)", margin: "0 0 0.5rem" }}>
           Reject Payment
         </h2>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", marginBottom: "1.5rem" }}>
-          <strong style={{ color: "#cbd5e1" }}>{tenantName}</strong> — {month} · {amount}
+        <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", marginBottom: "1.5rem" }}>
+          <strong style={{ color: "var(--text-primary)" }}>{tenantName}</strong> — {month} · {amount}
         </p>
 
         <form action={action} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -55,7 +55,7 @@ export default function RejectModal({
           <div>
             <label
               htmlFor="admin_note"
-              style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
+              style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}
             >
               Reason / Note (optional)
             </label>
@@ -70,7 +70,7 @@ export default function RejectModal({
           </div>
 
           {state?.error && (
-            <div style={{ color: "#ef4444", fontSize: "0.85rem" }}>{state.error}</div>
+            <div style={{ color: "var(--color-danger)", fontSize: "0.85rem" }}>{state.error}</div>
           )}
 
           <div style={{ display: "flex", gap: "0.75rem" }}>

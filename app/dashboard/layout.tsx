@@ -45,7 +45,7 @@ export default async function TenantLayout({
             <div className="gradient-text text-sm font-bold leading-tight">
               BH Manager
             </div>
-            <div className="text-xs leading-tight text-[#94a3b8]">
+            <div className="text-xs leading-tight text-[var(--text-muted)]">
               {tenant.name} · Room {tenant.room}
             </div>
           </div>

@@ -21,10 +21,10 @@ export default async function SettingsPage() {
   return (
     <div className="animate-in" style={{ maxWidth: "1000px" }}>
       <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "1.6rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>
+        <h1 style={{ fontSize: "1.6rem", fontWeight: 700, margin: 0, color: "var(--text-primary)" }}>
           Settings
         </h1>
-        <p style={{ color: "#64748b", marginTop: "0.25rem", fontSize: "0.9rem" }}>
+        <p style={{ color: "var(--text-muted)", marginTop: "0.25rem", fontSize: "0.9rem" }}>
           Manage your account profile and GCash payment settings.
         </p>
       </div>
@@ -32,7 +32,7 @@ export default async function SettingsPage() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "start" }} className="settings-grid">
         {/* Account Profile Form */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-          <h2 style={{ fontSize: "1.15rem", fontWeight: 600, color: "#e2e8f0", margin: 0 }}>
+          <h2 style={{ fontSize: "1.15rem", fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>
             Account Profile
           </h2>
           <div className="card">
@@ -42,7 +42,7 @@ export default async function SettingsPage() {
 
         {/* GCash Settings Form */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-          <h2 style={{ fontSize: "1.15rem", fontWeight: 600, color: "#e2e8f0", margin: 0 }}>
+          <h2 style={{ fontSize: "1.15rem", fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>
             GCash Configuration
           </h2>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 160px", gap: "1.25rem", alignItems: "start" }} className="gcash-form-grid">
@@ -52,7 +52,7 @@ export default async function SettingsPage() {
 
             {/* QR Preview */}
             <div>
-              <p style={{ fontSize: "0.8rem", color: "#64748b", marginBottom: "0.5rem", textAlign: "center" }}>
+              <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.5rem", textAlign: "center" }}>
                 Current QR
               </p>
               <div
@@ -64,7 +64,7 @@ export default async function SettingsPage() {
                   alignItems: "center",
                   justifyContent: "center",
                   minHeight: "150px",
-                  border: "2px solid #263044",
+                  border: "2px solid var(--border)",
                 }}
               >
                 {settings.qr_image_url ? (
@@ -76,15 +76,15 @@ export default async function SettingsPage() {
                     style={{ objectFit: "contain" }}
                   />
                 ) : (
-                  <div style={{ color: "#94a3b8", fontSize: "0.8rem", textAlign: "center" }}>
+                  <div style={{ color: "var(--text-muted)", fontSize: "0.8rem", textAlign: "center" }}>
                     No QR uploaded yet
                   </div>
                 )}
               </div>
               {settings.gcash_name && (
                 <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
-                  <div style={{ fontWeight: 700, color: "#e2e8f0", fontSize: "0.85rem" }}>{settings.gcash_name}</div>
-                  <div style={{ color: "#10b981", fontWeight: 600, fontSize: "0.8rem" }}>{settings.gcash_number}</div>
+                  <div style={{ fontWeight: 700, color: "var(--text-primary)", fontSize: "0.85rem" }}>{settings.gcash_name}</div>
+                  <div style={{ color: "var(--color-success)", fontWeight: 600, fontSize: "0.8rem" }}>{settings.gcash_number}</div>
                 </div>
               )}
             </div>

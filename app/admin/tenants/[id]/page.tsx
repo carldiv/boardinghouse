@@ -43,7 +43,7 @@ export default async function ViewTenantPage({ params }: { params: Promise<{ id:
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
         <Link
           href="/admin/tenants"
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: "#64748b", fontSize: "0.9rem", textDecoration: "none" }}
+          style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: "var(--text-muted)", fontSize: "0.9rem", textDecoration: "none" }}
         >
           ← Back to Tenants
         </Link>
@@ -58,26 +58,26 @@ export default async function ViewTenantPage({ params }: { params: Promise<{ id:
 
       {/* Header */}
       <div style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>Tenant Profile View</h1>
-        <p style={{ color: "#64748b", fontSize: "0.85rem", margin: "0.25rem 0 0" }}>Details and payment records for Room {t.room}</p>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: 700, margin: 0, color: "var(--text-primary)" }}>Tenant Profile View</h1>
+        <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: "0.25rem 0 0" }}>Details and payment records for Room {t.room}</p>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
         {/* Personal Info */}
-        <div style={{ backgroundColor: "#161b27", border: "1px solid #263044", borderRadius: "1rem", padding: "1.5rem" }}>
-          <h2 style={{ fontSize: "0.95rem", fontWeight: 600, color: "#94a3b8", marginTop: 0, marginBottom: "1rem" }}>Personal Info</h2>
-          <div style={{ background: "#1e2535", padding: "1rem", borderRadius: "0.75rem", border: "1px solid #2d3a52", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        <div style={{ backgroundColor: "var(--surface-1)", border: "1px solid var(--border)", borderRadius: "1rem", padding: "1.5rem" }}>
+          <h2 style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--text-muted)", marginTop: 0, marginBottom: "1rem" }}>Personal Info</h2>
+          <div style={{ background: "var(--surface-2)", padding: "1rem", borderRadius: "0.75rem", border: "1px solid var(--border-hover)", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <InfoRow label="Full Name" value={t.name} />
             <InfoRow label="Room Assigned" value={`Room ${t.room}`} />
-            <InfoRow label="Monthly Rent Rate" value={formatPeso(t.rent_amount)} valueColor="#10b981" />
+            <InfoRow label="Monthly Rent Rate" value={formatPeso(t.rent_amount)} valueColor="var(--color-success)" />
             <InfoRow label="Rent Due Day" value={`Day ${t.due_day} of each month`} />
-            <InfoRow label="Account" value={t.auth_user_id ? "Linked" : "No Account"} valueColor={t.auth_user_id ? "#10b981" : "#f59e0b"} />
+            <InfoRow label="Account" value={t.auth_user_id ? "Linked" : "No Account"} valueColor={t.auth_user_id ? "var(--color-success)" : "var(--color-warning)"} />
           </div>
         </div>
 
         {/* Payment History */}
-        <div style={{ backgroundColor: "#161b27", border: "1px solid #263044", borderRadius: "1rem", padding: "1.5rem" }}>
-          <h2 style={{ fontSize: "0.95rem", fontWeight: 600, color: "#94a3b8", marginTop: 0, marginBottom: "1rem" }}>Payment History</h2>
+        <div style={{ backgroundColor: "var(--surface-1)", border: "1px solid var(--border)", borderRadius: "1rem", padding: "1.5rem" }}>
+          <h2 style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--text-muted)", marginTop: 0, marginBottom: "1rem" }}>Payment History</h2>
           <div className="table-wrapper">
             <table style={{ minWidth: "100%" }}>
               <thead>
@@ -90,7 +90,7 @@ export default async function ViewTenantPage({ params }: { params: Promise<{ id:
               <tbody>
                 {p.length === 0 && (
                   <tr>
-                    <td colSpan={3} style={{ textAlign: "center", color: "#475569", padding: "2rem" }}>No payments logged</td>
+                    <td colSpan={3} style={{ textAlign: "center", color: "var(--text-muted)", padding: "2rem" }}>No payments logged</td>
                   </tr>
                 )}
                 {p.map((payment) => (
@@ -112,8 +112,8 @@ export default async function ViewTenantPage({ params }: { params: Promise<{ id:
       </div>
 
       {/* Monthly Billing Ledger */}
-      <div style={{ backgroundColor: "#161b27", border: "1px solid #263044", borderRadius: "1rem", padding: "1.5rem" }}>
-        <h2 style={{ fontSize: "0.95rem", fontWeight: 600, color: "#94a3b8", marginTop: 0, marginBottom: "1rem" }}>Monthly Billing Ledger</h2>
+      <div style={{ backgroundColor: "var(--surface-1)", border: "1px solid var(--border)", borderRadius: "1rem", padding: "1.5rem" }}>
+        <h2 style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--text-muted)", marginTop: 0, marginBottom: "1rem" }}>Monthly Billing Ledger</h2>
         <div className="table-wrapper">
           <table style={{ minWidth: "100%" }}>
             <thead>
@@ -129,12 +129,12 @@ export default async function ViewTenantPage({ params }: { params: Promise<{ id:
                 const item = ledger[m];
                 return (
                   <tr key={m}>
-                    <td style={{ fontWeight: 600, color: "#e2e8f0" }}>{formatMonth(m)}</td>
+                    <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{formatMonth(m)}</td>
                     <td>{formatPeso(item.rentAmount)}</td>
-                    <td style={{ color: item.confirmedPaid >= item.rentAmount ? "#10b981" : "#cbd5e1" }}>
+                    <td style={{ color: item.confirmedPaid >= item.rentAmount ? "var(--color-success)" : "var(--text-primary)" }}>
                       {formatPeso(item.confirmedPaid)}
                       {item.pendingPaid > 0 && (
-                        <span style={{ fontSize: "0.8rem", color: "#f59e0b", marginLeft: "0.4rem" }}>
+                        <span style={{ fontSize: "0.8rem", color: "var(--color-warning)", marginLeft: "0.4rem" }}>
                           (+{formatPeso(item.pendingPaid)} pending)
                         </span>
                       )}
@@ -165,8 +165,8 @@ export default async function ViewTenantPage({ params }: { params: Promise<{ id:
 function InfoRow({ label, value, valueColor }: { label: string; value: string; valueColor?: string }) {
   return (
     <div>
-      <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block" }}>{label}</span>
-      <span style={{ fontWeight: 600, color: valueColor ?? "#e2e8f0" }}>{value}</span>
+      <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>{label}</span>
+      <span style={{ fontWeight: 600, color: valueColor ?? "var(--text-primary)" }}>{value}</span>
     </div>
   );
 }

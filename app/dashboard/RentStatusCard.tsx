@@ -57,7 +57,7 @@ export default function RentStatusCard({
       }}
     >
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="m-0 text-sm font-semibold text-[#94a3b8]">
+        <h2 className="m-0 text-sm font-semibold text-[var(--text-muted)]">
           Monthly Rent Status
         </h2>
         <span className={`badge badge-${status}`}>
@@ -71,8 +71,8 @@ export default function RentStatusCard({
 
       <div className="flex gap-6 border-t pt-4" style={{ borderColor: cfg.border }}>
         <div>
-          <div className="mb-1 text-xs font-medium text-[#475569]">Due Date</div>
-          <div className="text-sm font-semibold text-[#cbd5e1]">
+          <div className="mb-1 text-xs font-medium text-[var(--text-muted)]">Due Date</div>
+          <div className="text-sm font-semibold text-[var(--text-primary)]">
             {dueDate.toLocaleDateString("en-PH", {
               month: "short",
               day: "numeric",
@@ -81,7 +81,7 @@ export default function RentStatusCard({
           </div>
         </div>
         <div>
-          <div className="mb-1 text-xs font-medium text-[#475569]">
+          <div className="mb-1 text-xs font-medium text-[var(--text-muted)]">
             {status === "paid" ? "Amount Paid" : "Amount Due"}
           </div>
           <div className="text-sm font-semibold" style={{ color: cfg.color }}>
@@ -92,7 +92,7 @@ export default function RentStatusCard({
 
       {nextDueDate && (
         <div className="mt-4 border-t pt-4" style={{ borderColor: cfg.border }}>
-          <div className="mb-1 text-xs font-medium text-[#475569]">Next Due Date</div>
+          <div className="mb-1 text-xs font-medium text-[var(--text-muted)]">Next Due Date</div>
           <div className="text-sm font-semibold text-[var(--color-status-paid)]">
             {nextDueDate.toLocaleDateString("en-PH", {
               month: "long",

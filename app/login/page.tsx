@@ -46,7 +46,7 @@ export default function LoginPage() {
         >
           BH Manager
         </h1>
-        <p style={{ color: "#64748b", marginTop: "0.4rem", fontSize: "0.9rem" }}>
+        <p style={{ color: "var(--text-muted)", marginTop: "0.4rem", fontSize: "0.9rem" }}>
           Sign in to your account
         </p>
       </div>
@@ -57,7 +57,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="email"
-              style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
+              style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}
             >
               Email address
             </label>
@@ -75,7 +75,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="password"
-              style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
+              style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}
             >
               Password
             </label>
@@ -97,7 +97,7 @@ export default function LoginPage() {
                 border: "1px solid rgba(239,68,68,0.3)",
                 borderRadius: "0.5rem",
                 padding: "0.75rem 1rem",
-                color: "#ef4444",
+                color: "var(--color-danger)",
                 fontSize: "0.875rem",
               }}
             >
@@ -124,7 +124,7 @@ export default function LoginPage() {
         </form>
       </div>
 
-      <p style={{ textAlign: "center", marginTop: "1.5rem", fontSize: "0.8rem", color: "#475569" }}>
+      <p style={{ textAlign: "center", marginTop: "1.5rem", fontSize: "0.8rem", color: "var(--text-muted)" }}>
         Contact your admin if you need access.
       </p>
 

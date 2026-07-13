@@ -21,15 +21,15 @@ export default function AddTenantPage() {
       {/* Back link */}
       <Link
         href="/admin/tenants"
-        style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: "#64748b", fontSize: "0.9rem", marginBottom: "1.5rem", textDecoration: "none" }}
+        style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: "1.5rem", textDecoration: "none" }}
       >
         ← Back to Tenants
       </Link>
 
-      <div style={{ backgroundColor: "#161b27", border: "1px solid #263044", borderRadius: "1rem", padding: "2rem", boxShadow: "0 25px 50px rgba(0,0,0,0.4)" }}>
+      <div style={{ backgroundColor: "var(--surface-1)", border: "1px solid var(--border)", borderRadius: "1rem", padding: "2rem", boxShadow: "0 25px 50px rgba(0,0,0,0.4)" }}>
         <div style={{ marginBottom: "1.75rem" }}>
-          <h1 style={{ fontSize: "1.4rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>Add Tenant</h1>
-          <p style={{ color: "#64748b", fontSize: "0.85rem", margin: "0.25rem 0 0" }}>Creates a tenant and a login account.</p>
+          <h1 style={{ fontSize: "1.4rem", fontWeight: 700, margin: 0, color: "var(--text-primary)" }}>Add Tenant</h1>
+          <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: "0.25rem 0 0" }}>Creates a tenant and a login account.</p>
         </div>
 
         <form action={action} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -43,18 +43,18 @@ export default function AddTenantPage() {
           </div>
 
           <div>
-            <label htmlFor="due_day" style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}>
+            <label htmlFor="due_day" style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}>
               Rent Due Day (1–31)
             </label>
             <select id="due_day" name="due_day" className="input" required defaultValue="1" style={{ padding: "0.6rem 0.8rem" }}>
               {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                <option key={d} value={d} style={{ background: "#1e2535" }}>Day {d}</option>
+                <option key={d} value={d} style={{ background: "var(--surface-2)" }}>Day {d}</option>
               ))}
             </select>
           </div>
 
           {state?.error && (
-            <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "0.5rem", padding: "0.75rem 1rem", color: "#ef4444", fontSize: "0.875rem" }}>
+            <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "0.5rem", padding: "0.75rem 1rem", color: "var(--color-danger)", fontSize: "0.875rem" }}>
               {state.error}
             </div>
           )}
@@ -79,7 +79,7 @@ function Field({ label, id, name, type = "text", placeholder, required, min, ste
 }) {
   return (
     <div>
-      <label htmlFor={id} style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}>{label}</label>
+      <label htmlFor={id} style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}>{label}</label>
       <input id={id} name={name} type={type} placeholder={placeholder} required={required} min={min} step={step} className="input" />
     </div>
   );

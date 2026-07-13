@@ -21,7 +21,7 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
       <div>
         <label
           htmlFor="gcash_name"
-          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
+          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}
         >
           GCash Account Name
         </label>
@@ -38,7 +38,7 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
       <div>
         <label
           htmlFor="gcash_number"
-          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
+          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}
         >
           GCash Number
         </label>
@@ -55,13 +55,13 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
       <div>
         <label
           htmlFor="qr_image"
-          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
+          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}
         >
           GCash QR Code Image
         </label>
         <div
           style={{
-            border: "2px dashed #2d3a52",
+            border: "2px dashed var(--border-hover)",
             borderRadius: "0.75rem",
             padding: "1.5rem",
             textAlign: "center",
@@ -77,9 +77,9 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
           ) : (
             <>
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style={{ margin: "0 auto 0.5rem", display: "block" }}>
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <div style={{ color: "#64748b", fontSize: "0.85rem" }}>
+              <div style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
                 Click or drag to upload QR image
               </div>
             </>
@@ -96,12 +96,12 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
       </div>
 
       {state?.error && (
-        <div style={{ color: "#ef4444", fontSize: "0.875rem", background: "rgba(239,68,68,0.1)", padding: "0.75rem", borderRadius: "0.5rem" }}>
+        <div style={{ color: "var(--color-danger)", fontSize: "0.875rem", background: "rgba(239,68,68,0.1)", padding: "0.75rem", borderRadius: "0.5rem" }}>
           {state.error}
         </div>
       )}
       {state?.success && (
-        <div style={{ color: "#10b981", fontSize: "0.875rem", background: "rgba(16,185,129,0.1)", padding: "0.75rem", borderRadius: "0.5rem" }}>
+        <div style={{ color: "var(--color-success)", fontSize: "0.875rem", background: "rgba(16,185,129,0.1)", padding: "0.75rem", borderRadius: "0.5rem" }}>
           ✓ Settings saved!
         </div>
       )}

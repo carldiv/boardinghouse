@@ -23,7 +23,7 @@ export default async function HistoryPage() {
   return (
     <div className="animate-in flex flex-col gap-5">
       <div className="card">
-        <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-[#94a3b8]">
+        <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-[var(--text-muted)]">
           Payment History
         </h2>
         <PaymentHistoryList payments={payments} />

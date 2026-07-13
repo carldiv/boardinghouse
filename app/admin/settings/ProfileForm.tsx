@@ -17,7 +17,7 @@ export default function ProfileForm({ initialName, initialEmail }: ProfileFormPr
       <div>
         <label
           htmlFor="name"
-          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
+          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}
         >
           Full Name
         </label>
@@ -35,7 +35,7 @@ export default function ProfileForm({ initialName, initialEmail }: ProfileFormPr
       <div>
         <label
           htmlFor="email"
-          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
+          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}
         >
           Email Address
         </label>
@@ -53,7 +53,7 @@ export default function ProfileForm({ initialName, initialEmail }: ProfileFormPr
       <div>
         <label
           htmlFor="password"
-          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
+          style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}
         >
           New Password (leave blank to keep current)
         </label>
@@ -69,12 +69,12 @@ export default function ProfileForm({ initialName, initialEmail }: ProfileFormPr
       </div>
 
       {state?.error && (
-        <div style={{ color: "#ef4444", fontSize: "0.875rem", background: "rgba(239,68,68,0.1)", padding: "0.75rem", borderRadius: "0.5rem" }}>
+        <div style={{ color: "var(--color-danger)", fontSize: "0.875rem", background: "rgba(239,68,68,0.1)", padding: "0.75rem", borderRadius: "0.5rem" }}>
           {state.error}
         </div>
       )}
       {state?.success && (
-        <div style={{ color: "#10b981", fontSize: "0.875rem", background: "rgba(16,185,129,0.1)", padding: "0.75rem", borderRadius: "0.5rem" }}>
+        <div style={{ color: "var(--color-success)", fontSize: "0.875rem", background: "rgba(16,185,129,0.1)", padding: "0.75rem", borderRadius: "0.5rem" }}>
           ✓ Profile updated successfully!
         </div>
       )}

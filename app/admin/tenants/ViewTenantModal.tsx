@@ -30,15 +30,15 @@ export default function ViewTenantModal({ tenant, payments, isOpen, onClose }: V
       }}
     >
       <div
-        style={{ width: "100%", maxWidth: "780px", backgroundColor: "#161b27", border: "1px solid #263044", borderRadius: "1rem", boxShadow: "0 25px 50px rgba(0,0,0,0.7)", padding: "2rem", flexShrink: 0 }}
+        style={{ width: "100%", maxWidth: "780px", backgroundColor: "var(--surface-1)", border: "1px solid var(--border)", borderRadius: "1rem", boxShadow: "0 25px 50px rgba(0,0,0,0.7)", padding: "2rem", flexShrink: 0 }}
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <div>
-            <h2 style={{ fontSize: "1.3rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>
+            <h2 style={{ fontSize: "1.3rem", fontWeight: 700, margin: 0, color: "var(--text-primary)" }}>
               Tenant Profile View
             </h2>
-            <p style={{ color: "#64748b", marginTop: "0.2rem", fontSize: "0.85rem", margin: 0 }}>
+            <p style={{ color: "var(--text-muted)", marginTop: "0.2rem", fontSize: "0.85rem", margin: 0 }}>
               Details and payment records for Room {tenant.room}
             </p>
           </div>
@@ -47,7 +47,7 @@ export default function ViewTenantModal({ tenant, payments, isOpen, onClose }: V
             style={{
               background: "none",
               border: "none",
-              color: "#64748b",
+              color: "var(--text-muted)",
               fontSize: "1.5rem",
               cursor: "pointer",
               padding: "0.25rem",
@@ -60,32 +60,32 @@ export default function ViewTenantModal({ tenant, payments, isOpen, onClose }: V
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "1.5rem" }} className="view-grid">
           {/* Tenant Details */}
           <div>
-            <h3 style={{ fontSize: "0.95rem", fontWeight: 600, color: "#94a3b8", marginBottom: "0.75rem", marginTop: 0 }}>
+            <h3 style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--text-muted)", marginBottom: "0.75rem", marginTop: 0 }}>
               Personal Info
             </h3>
-            <div style={{ background: "#1e2535", padding: "1rem", borderRadius: "0.75rem", border: "1px solid #2d3a52" }}>
+            <div style={{ background: "var(--surface-2)", padding: "1rem", borderRadius: "0.75rem", border: "1px solid var(--border-hover)" }}>
               <div style={{ marginBottom: "0.75rem" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block" }}>Full Name</span>
-                <span style={{ fontWeight: 600, color: "#e2e8f0" }}>{tenant.name}</span>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Full Name</span>
+                <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{tenant.name}</span>
               </div>
               <div style={{ marginBottom: "0.75rem" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block" }}>Room Assigned</span>
-                <span style={{ fontWeight: 600, color: "#e2e8f0" }}>Room {tenant.room}</span>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Room Assigned</span>
+                <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>Room {tenant.room}</span>
               </div>
               <div style={{ marginBottom: "0.75rem" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block" }}>Monthly Rent Rate</span>
-                <span style={{ fontWeight: 600, color: "#10b981" }}>{formatPeso(tenant.rent_amount)}</span>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Monthly Rent Rate</span>
+                <span style={{ fontWeight: 600, color: "var(--color-success)" }}>{formatPeso(tenant.rent_amount)}</span>
               </div>
               <div>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block" }}>Rent Due Day</span>
-                <span style={{ fontWeight: 600, color: "#e2e8f0" }}>Day {tenant.due_day} of each month</span>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Rent Due Day</span>
+                <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>Day {tenant.due_day} of each month</span>
               </div>
             </div>
           </div>
 
           {/* Payment History */}
           <div>
-            <h3 style={{ fontSize: "0.95rem", fontWeight: 600, color: "#94a3b8", marginBottom: "0.75rem", marginTop: 0 }}>
+            <h3 style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--text-muted)", marginBottom: "0.75rem", marginTop: 0 }}>
               Payment History
             </h3>
             <div className="table-wrapper" style={{ maxHeight: "300px", overflowY: "auto" }}>
@@ -100,7 +100,7 @@ export default function ViewTenantModal({ tenant, payments, isOpen, onClose }: V
                 <tbody>
                   {(!payments || payments.length === 0) && (
                     <tr>
-                      <td colSpan={3} style={{ textAlign: "center", color: "#475569", padding: "2rem" }}>
+                      <td colSpan={3} style={{ textAlign: "center", color: "var(--text-muted)", padding: "2rem" }}>
                         No payments logged
                       </td>
                     </tr>

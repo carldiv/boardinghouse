@@ -33,7 +33,7 @@ export default function Loading() {
         .border-b-2 { border-bottom-width: 2px; }
         .border-indigo-600 { border-color: #4f46e5; }
         .text-sm { font-size: 0.875rem; }
-        .text-muted-foreground { color: #64748b; }
+        .text-muted-foreground { color: var(--text-muted); }
       `}</style>
     </div>
   );

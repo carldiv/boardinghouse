@@ -254,7 +254,7 @@ export default function PaymentForm({
             value={refNumber}
             onChange={(e) => handleRefChange(e.target.value)}
             style={{
-              borderColor: refDuplicate ? "#ef4444" : undefined,
+              borderColor: refDuplicate ? "var(--color-danger)" : undefined,
               paddingRight: refChecking || refDuplicate ? "2.5rem" : undefined,
               transition: "border-color 0.2s",
             }}
@@ -281,7 +281,7 @@ export default function PaymentForm({
             background: "rgba(239,68,68,0.1)",
             border: "1px solid rgba(239,68,68,0.35)",
             borderRadius: "0.5rem",
-            color: "#ef4444",
+            color: "var(--color-danger)",
             fontSize: "0.8rem",
             display: "flex",
             alignItems: "center",
@@ -333,13 +333,13 @@ export default function PaymentForm({
               >
                 <path
                   d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"
-                  stroke="#64748b"
+                  stroke="var(--text-muted)"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
               </svg>
-              <div className="text-sm text-[#64748b]">
+              <div className="text-sm text-[var(--text-muted)]">
                 Tap to upload receipt screenshot
               </div>
             </>
@@ -357,10 +357,10 @@ export default function PaymentForm({
       </div>
 
       {scanStatus && (
-        <div className={`text-xs rounded-lg px-3 py-2 ${isScanning ? "bg-[rgba(99,102,241,0.1)] text-[#818cf8]" : "bg-[rgba(16,185,129,0.1)] text-[var(--color-status-paid)]"}`}>
+        <div className={`text-xs rounded-lg px-3 py-2 ${isScanning ? "bg-[rgba(99,102,241,0.1)] text-[var(--color-brand-500)]" : "bg-[rgba(16,185,129,0.1)] text-[var(--color-status-paid)]"}`}>
           <div className="flex items-center gap-2">
             {isScanning && (
-              <svg className="animate-spin h-3.5 w-3.5 text-[#818cf8]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-3.5 w-3.5 text-[var(--color-brand-500)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>

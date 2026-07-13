@@ -20,7 +20,7 @@ export default function Loading() {
       {/* Table skeleton */}
       <div style={card}>
         {[...Array(5)].map((_, i) => (
-          <div key={i} style={{ display: "flex", gap: "1rem", padding: "1rem 0", borderBottom: "1px solid #1e2535" }}>
+          <div key={i} style={{ display: "flex", gap: "1rem", padding: "1rem 0", borderBottom: "1px solid var(--surface-2)" }}>
             <div style={skel("10rem", "1rem", "0")} />
             <div style={skel("4rem", "1rem", "0")} />
             <div style={skel("6rem", "1rem", "0")} />
@@ -35,8 +35,8 @@ export default function Loading() {
 }
 
 const card: React.CSSProperties = {
-  background: "#161b27",
-  border: "1px solid #263044",
+  background: "var(--surface-1)",
+  border: "1px solid var(--border)",
   borderRadius: "0.75rem",
   padding: "1.25rem 1.5rem",
 };
@@ -47,7 +47,7 @@ function skel(width: string, height: string, marginTop: string): React.CSSProper
     height,
     marginTop,
     borderRadius: "0.4rem",
-    background: "linear-gradient(90deg, #1e2535 25%, #263044 50%, #1e2535 75%)",
+    background: "linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%)",
     backgroundSize: "200% 100%",
     animation: "shimmer 1.5s infinite",
   };

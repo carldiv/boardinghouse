@@ -31,7 +31,7 @@ export default function CopyButton({ text }: { text: string }) {
     >
       {copied ? (
         <>
-          <span style={{ color: "#10b981" }}>✓</span> Copied!
+          <span style={{ color: "var(--color-success)" }}>✓</span> Copied!
         </>
       ) : (
         <>

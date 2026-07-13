@@ -44,10 +44,10 @@ export default async function AdminDashboardPage() {
     <div className="animate-in" style={{ maxWidth: "1400px" }}>
       {/* Header */}
       <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "1.6rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>
+        <h1 style={{ fontSize: "1.6rem", fontWeight: 700, margin: 0, color: "var(--text-primary)" }}>
           Dashboard
         </h1>
-        <p style={{ color: "#64748b", marginTop: "0.25rem", fontSize: "0.9rem" }}>
+        <p style={{ color: "var(--text-muted)", marginTop: "0.25rem", fontSize: "0.9rem" }}>
           {now.toLocaleDateString("en-PH", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
         </p>
       </div>
@@ -62,10 +62,10 @@ export default async function AdminDashboardPage() {
         }}
       >
         {[
-          { label: "Total Tenants", value: counts.total, color: "#818cf8" },
-          { label: "Paid This Month", value: counts.paid, color: "#10b981" },
-          { label: "Pending Review", value: counts.pending, color: "#f59e0b" },
-          { label: "Overdue", value: counts.overdue, color: "#ef4444" },
+          { label: "Total Tenants", value: counts.total, color: "var(--color-brand-500)" },
+          { label: "Paid This Month", value: counts.paid, color: "var(--color-success)" },
+          { label: "Pending Review", value: counts.pending, color: "var(--color-warning)" },
+          { label: "Overdue", value: counts.overdue, color: "var(--color-danger)" },
         ].map((stat) => (
           <div
             key={stat.label}
@@ -75,7 +75,7 @@ export default async function AdminDashboardPage() {
             <div style={{ fontSize: "2rem", fontWeight: 800, color: stat.color }}>
               {stat.value}
             </div>
-            <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.2rem", fontWeight: 500 }}>
+            <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginTop: "0.2rem", fontWeight: 500 }}>
               {stat.label}
             </div>
           </div>
@@ -86,7 +86,7 @@ export default async function AdminDashboardPage() {
         {/* Tenant Status Table */}
         <div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
-            <h2 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#e8eaf0", margin: 0 }}>
+            <h2 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
               Tenant Status
             </h2>
             <Link href="/admin/tenants/new" className="btn btn-primary btn-sm">
@@ -108,14 +108,14 @@ export default async function AdminDashboardPage() {
               <tbody>
                 {tenantStatuses.length === 0 && (
                   <tr>
-                    <td colSpan={6} style={{ textAlign: "center", color: "#475569", padding: "2rem" }}>
-                      No tenants yet. <Link href="/admin/tenants/new" style={{ color: "#818cf8" }}>Add one →</Link>
+                    <td colSpan={6} style={{ textAlign: "center", color: "var(--text-muted)", padding: "2rem" }}>
+                      No tenants yet. <Link href="/admin/tenants/new" style={{ color: "var(--color-brand-500)" }}>Add one →</Link>
                     </td>
                   </tr>
                 )}
                 {tenantStatuses.map(({ tenant, status }) => (
                   <tr key={tenant.id}>
-                    <td style={{ fontWeight: 600, color: "#e2e8f0" }}>{tenant.name}</td>
+                    <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{tenant.name}</td>
                     <td>{tenant.room}</td>
                     <td>{formatPeso(tenant.rent_amount)}</td>
                     <td>Day {tenant.due_day}</td>
@@ -141,13 +141,13 @@ export default async function AdminDashboardPage() {
 
         {/* Pending Payments Queue */}
         <div>
-          <h2 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#e8eaf0", marginBottom: "1rem" }}>
+          <h2 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "1rem" }}>
             Pending Review
             {pendingPayments.length > 0 && (
               <span
                 style={{
                   marginLeft: "0.5rem",
-                  background: "#f59e0b",
+                  background: "var(--color-warning)",
                   color: "#1a1200",
                   fontSize: "0.7rem",
                   fontWeight: 700,
@@ -164,7 +164,7 @@ export default async function AdminDashboardPage() {
             {pendingPayments.length === 0 && (
               <div
                 className="card"
-                style={{ textAlign: "center", color: "#475569", padding: "2rem", fontSize: "0.9rem" }}
+                style={{ textAlign: "center", color: "var(--text-muted)", padding: "2rem", fontSize: "0.9rem" }}
               >
                 ✅ All caught up!
               </div>
@@ -182,15 +182,15 @@ export default async function AdminDashboardPage() {
                           alt="Receipt"
                           width={64}
                           height={80}
-                          style={{ borderRadius: "6px", objectFit: "cover", border: "1px solid #263044" }}
+                          style={{ borderRadius: "6px", objectFit: "cover", border: "1px solid var(--border)" }}
                         />
                       </a>
                     ) : (
                       <div
                         style={{
-                          width: 64, height: 80, background: "#1e2535", borderRadius: "6px",
+                          width: 64, height: 80, background: "var(--surface-2)", borderRadius: "6px",
                           display: "flex", alignItems: "center", justifyContent: "center",
-                          color: "#475569", fontSize: "0.7rem", flexShrink: 0,
+                          color: "var(--text-muted)", fontSize: "0.7rem", flexShrink: 0,
                         }}
                       >
                         No receipt
@@ -198,19 +198,19 @@ export default async function AdminDashboardPage() {
                     )}
 
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, color: "#e2e8f0", fontSize: "0.9rem" }}>
+                      <div style={{ fontWeight: 700, color: "var(--text-primary)", fontSize: "0.9rem" }}>
                         {tenant?.name ?? "Unknown"}
                       </div>
-                      <div style={{ color: "#64748b", fontSize: "0.75rem", marginBottom: "0.25rem" }}>
+                      <div style={{ color: "var(--text-muted)", fontSize: "0.75rem", marginBottom: "0.25rem" }}>
                         Room {tenant?.room} · {formatMonth(payment.month)}
                       </div>
-                      <div style={{ color: "#10b981", fontWeight: 700, fontSize: "0.95rem" }}>
+                      <div style={{ color: "var(--color-success)", fontWeight: 700, fontSize: "0.95rem" }}>
                         {formatPeso(payment.amount)}
                       </div>
-                      <div style={{ color: "#94a3b8", fontSize: "0.75rem" }}>
+                      <div style={{ color: "var(--text-secondary)", fontSize: "0.75rem" }}>
                         Ref: {payment.ref_number}
                       </div>
-                      <div style={{ color: "#475569", fontSize: "0.72rem", marginTop: "0.15rem" }}>
+                      <div style={{ color: "var(--text-muted)", fontSize: "0.72rem", marginTop: "0.15rem" }}>
                         {formatDate(payment.submitted_at)}
                       </div>
                     </div>

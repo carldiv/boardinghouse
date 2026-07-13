@@ -39,15 +39,15 @@ export default function EditTenantModal({ tenant, isOpen, onClose, onSuccess }: 
       }}
     >
       <div
-        style={{ width: "100%", maxWidth: "520px", backgroundColor: "#161b27", border: "1px solid #263044", borderRadius: "1rem", boxShadow: "0 25px 50px rgba(0,0,0,0.7)", padding: "2rem", flexShrink: 0 }}
+        style={{ width: "100%", maxWidth: "520px", backgroundColor: "var(--surface-1)", border: "1px solid var(--border)", borderRadius: "1rem", boxShadow: "0 25px 50px rgba(0,0,0,0.7)", padding: "2rem", flexShrink: 0 }}
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <div>
-            <h2 style={{ fontSize: "1.3rem", fontWeight: 700, margin: 0, color: "#e8eaf0" }}>Edit Tenant Profile</h2>
-            <p style={{ color: "#64748b", fontSize: "0.8rem", margin: "0.25rem 0 0" }}>Update room assignment or payment settings.</p>
+            <h2 style={{ fontSize: "1.3rem", fontWeight: 700, margin: 0, color: "var(--text-primary)" }}>Edit Tenant Profile</h2>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", margin: "0.25rem 0 0" }}>Update room assignment or payment settings.</p>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "#64748b", fontSize: "1.5rem", cursor: "pointer", padding: "0.25rem", lineHeight: 1 }}>&times;</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--text-muted)", fontSize: "1.5rem", cursor: "pointer", padding: "0.25rem", lineHeight: 1 }}>&times;</button>
         </div>
 
         <form action={action} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -58,17 +58,17 @@ export default function EditTenantModal({ tenant, isOpen, onClose, onSuccess }: 
             <Field label="Monthly Rent (₱)" id="edit-rent" name="rent_amount" type="number" defaultValue={String(tenant.rent_amount)} min="1" step="0.01" required />
           </div>
           <div>
-            <label htmlFor="edit-due-day" style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}>Rent Due Day (1–31)</label>
+            <label htmlFor="edit-due-day" style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}>Rent Due Day (1–31)</label>
             <select id="edit-due-day" name="due_day" className="input" defaultValue={tenant.due_day}>
               {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                <option key={d} value={d} style={{ background: "#1e2535" }}>Day {d}</option>
+                <option key={d} value={d} style={{ background: "var(--surface-2)" }}>Day {d}</option>
               ))}
             </select>
           </div>
 
           <div>
-            <label htmlFor="edit-move-in" style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}>
-              Move-in Month <span style={{ color: "#475569", fontWeight: 400 }}>(sets when rent starts)</span>
+            <label htmlFor="edit-move-in" style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}>
+              Move-in Month <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>(sets when rent starts)</span>
             </label>
             <input
               id="edit-move-in"
@@ -86,7 +86,7 @@ export default function EditTenantModal({ tenant, isOpen, onClose, onSuccess }: 
             />
           </div>
           {state?.error && (
-            <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "0.5rem", padding: "0.75rem 1rem", color: "#ef4444", fontSize: "0.875rem" }}>
+            <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "0.5rem", padding: "0.75rem 1rem", color: "var(--color-danger)", fontSize: "0.875rem" }}>
               {state.error}
             </div>
           )}
@@ -125,7 +125,7 @@ function Field({
     <div>
       <label
         htmlFor={id}
-        style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}
+        style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}
       >
         {label}
       </label>

@@ -8,7 +8,7 @@ interface PaymentHistoryListProps {
 export default function PaymentHistoryList({ payments }: PaymentHistoryListProps) {
   if (payments.length === 0) {
     return (
-      <p className="py-4 text-center text-sm text-[#475569]">No payments yet.</p>
+      <p className="py-4 text-center text-sm text-[var(--text-muted)]">No payments yet.</p>
     );
   }
 
@@ -24,10 +24,10 @@ export default function PaymentHistoryList({ payments }: PaymentHistoryListProps
               </span>
               <span className={`badge badge-${cfg.badge}`}>{cfg.label}</span>
             </div>
-            <p className="mb-1 text-sm text-[#94a3b8]">
+            <p className="mb-1 text-sm text-[var(--text-muted)]">
               {formatPeso(p.amount)} · Ref: {p.ref_number}
             </p>
-            <p className="text-xs text-[#64748b]">
+            <p className="text-xs text-[var(--text-muted)]">
               Submitted {formatDate(p.submitted_at)}
             </p>
             {p.admin_note && (

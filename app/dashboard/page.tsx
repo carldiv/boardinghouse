@@ -50,7 +50,7 @@ export default async function TenantDashboardPage() {
       />
 
       <div className="card">
-        <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-[#94a3b8]">
+        <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-[var(--text-muted)]">
           Monthly Billing Ledger
         </h2>
         <div className="table-wrapper">
@@ -68,12 +68,12 @@ export default async function TenantDashboardPage() {
                 const item = ledger[m];
                 return (
                   <tr key={m}>
-                    <td style={{ fontWeight: 600, color: "#e2e8f0" }}>{formatMonth(m)}</td>
+                    <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{formatMonth(m)}</td>
                     <td>{formatPeso(item.rentAmount)}</td>
-                    <td style={{ color: item.confirmedPaid >= item.rentAmount ? "#10b981" : "#cbd5e1" }}>
+                    <td style={{ color: item.confirmedPaid >= item.rentAmount ? "var(--color-success)" : "var(--text-primary)" }}>
                       {formatPeso(item.confirmedPaid)}
                       {item.pendingPaid > 0 && (
-                        <span style={{ fontSize: "0.8rem", color: "#f59e0b", marginLeft: "0.4rem" }}>
+                        <span style={{ fontSize: "0.8rem", color: "var(--color-warning)", marginLeft: "0.4rem" }}>
                           (+{formatPeso(item.pendingPaid)} pending)
                         </span>
                       )}

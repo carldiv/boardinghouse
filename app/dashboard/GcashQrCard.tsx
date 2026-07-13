@@ -27,7 +27,7 @@ export default function GcashQrCard({ qrImageUrl }: GcashQrCardProps) {
 
   return (
     <div className="card">
-      <h2 className="mb-4 text-center text-sm font-bold uppercase tracking-wider text-[#94a3b8]">
+      <h2 className="mb-4 text-center text-sm font-bold uppercase tracking-wider text-[var(--text-muted)]">
         Scan QR Code
       </h2>
 
