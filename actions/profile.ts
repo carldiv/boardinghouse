@@ -64,6 +64,9 @@ export async function updateProfile(
       }
     }
 
+    // Refresh the local session so cookies get the new JWT with updated email/name
+    await supabase.auth.refreshSession();
+
     revalidatePath("/admin/settings");
     revalidatePath("/dashboard");
     return { success: true };
