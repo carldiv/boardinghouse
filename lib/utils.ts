@@ -8,6 +8,7 @@ export interface TenantRow {
   due_day: number;
   auth_user_id: string | null;
   created_at?: string;
+  move_in_date?: string | null;
 }
 
 export interface PaymentRow {
@@ -89,7 +90,9 @@ export function computeTenantLedger(
   const months = getTenantMonthsRange(tenant.created_at, now);
   const chronologicalMonths = [...months].reverse();
 
-  const tenantStartISO = tenant.created_at ? toMonthISO(new Date(tenant.created_at)) : "";
+  // Prefer explicit move_in_date; fall back to created_at
+  const startSource = tenant.move_in_date ?? tenant.created_at;
+  const tenantStartISO = startSource ? toMonthISO(new Date(startSource)) : "";
   const ledger: Record<string, MonthLedger> = {};
   for (const m of chronologicalMonths) {
     const isBeforeStart = tenantStartISO && m < tenantStartISO;

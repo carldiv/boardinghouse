@@ -22,6 +22,9 @@ export async function createTenant(
   const room = String(formData.get("room") ?? "").trim();
   const rent_amount = parseFloat(String(formData.get("rent_amount") ?? "0"));
   const due_day = parseInt(String(formData.get("due_day") ?? "1"), 10);
+  const move_in_raw = String(formData.get("move_in_date") ?? "").trim();
+  // Input type="month" yields "YYYY-MM"; append "-01" for the date column
+  const move_in_date = move_in_raw ? `${move_in_raw}-01` : null;
 
   if (!name || !email || !password || !room || isNaN(rent_amount) || isNaN(due_day)) {
     return { error: "All fields are required." };
@@ -55,6 +58,7 @@ export async function createTenant(
     room,
     rent_amount,
     due_day,
+    ...(move_in_date ? { move_in_date } : {}),
   });
 
   if (tenantError) {
@@ -79,6 +83,8 @@ export async function updateTenant(
   const room = String(formData.get("room") ?? "").trim();
   const rent_amount = parseFloat(String(formData.get("rent_amount") ?? "0"));
   const due_day = parseInt(String(formData.get("due_day") ?? "1"), 10);
+  const move_in_raw = String(formData.get("move_in_date") ?? "").trim();
+  const move_in_date = move_in_raw ? `${move_in_raw}-01` : null;
 
   if (!id || !name || !room || isNaN(rent_amount) || isNaN(due_day)) {
     return { error: "All fields are required." };
@@ -87,7 +93,7 @@ export async function updateTenant(
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("tenants")
-    .update({ name, room, rent_amount, due_day })
+    .update({ name, room, rent_amount, due_day, move_in_date })
     .eq("id", id);
 
   if (error) return { error: error.message };

@@ -65,6 +65,26 @@ export default function EditTenantModal({ tenant, isOpen, onClose, onSuccess }: 
               ))}
             </select>
           </div>
+
+          <div>
+            <label htmlFor="edit-move-in" style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "#94a3b8", fontWeight: 500 }}>
+              Move-in Month <span style={{ color: "#475569", fontWeight: 400 }}>(sets when rent starts)</span>
+            </label>
+            <input
+              id="edit-move-in"
+              name="move_in_date"
+              type="month"
+              className="input"
+              style={{ colorScheme: "dark" }}
+              defaultValue={
+                tenant.move_in_date
+                  ? tenant.move_in_date.slice(0, 7)
+                  : tenant.created_at
+                  ? tenant.created_at.slice(0, 7)
+                  : ""
+              }
+            />
+          </div>
           {state?.error && (
             <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "0.5rem", padding: "0.75rem 1rem", color: "#ef4444", fontSize: "0.875rem" }}>
               {state.error}
