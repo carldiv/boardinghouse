@@ -76,10 +76,37 @@ export default function ViewTenantModal({ tenant, payments, isOpen, onClose }: V
                 <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Monthly Rent Rate</span>
                 <span style={{ fontWeight: 600, color: "var(--color-success)" }}>{formatPeso(tenant.rent_amount)}</span>
               </div>
-              <div>
+              <div style={{ marginBottom: "0.75rem" }}>
                 <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Rent Due Day</span>
                 <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>Day {tenant.due_day} of each month</span>
               </div>
+              {tenant.address && (
+                <div style={{ marginBottom: "0.75rem" }}>
+                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Address</span>
+                  <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{tenant.address}</span>
+                </div>
+              )}
+
+              {(tenant.emergency_contact_name || tenant.emergency_contact_phone) && (
+                <>
+                  <div style={{ borderTop: "1px solid var(--border)", margin: "0.75rem 0 0.75rem" }} />
+                  <p style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 0.6rem" }}>
+                    Emergency Contact
+                  </p>
+                  {tenant.emergency_contact_name && (
+                    <div style={{ marginBottom: "0.5rem" }}>
+                      <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Name</span>
+                      <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{tenant.emergency_contact_name}</span>
+                    </div>
+                  )}
+                  {tenant.emergency_contact_phone && (
+                    <div>
+                      <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>Phone</span>
+                      <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{tenant.emergency_contact_phone}</span>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
 

@@ -96,6 +96,16 @@ export default function AddTenantModal({ isOpen, onClose, onSuccess }: AddTenant
             />
           </div>
 
+          {/* Divider */}
+          <div style={{ borderTop: "1px solid var(--border)", margin: "0.25rem 0" }} />
+          <p style={{ fontSize: "0.78rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>
+            Emergency Contact
+          </p>
+
+          <Field label="Emergency Contact Name" id="emergency_contact_name" name="emergency_contact_name" placeholder="e.g. Maria dela Cruz (Mother)" />
+          <Field label="Emergency Contact Phone" id="emergency_contact_phone" name="emergency_contact_phone" type="tel" placeholder="e.g. 09171234567" />
+          <Field label="Tenant Address" id="address" name="address" placeholder="e.g. 123 Rizal St, Brgy. San Jose, Manila" />
+
           {state?.error && (
             <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "0.5rem", padding: "0.75rem 1rem", color: "var(--color-danger)", fontSize: "0.875rem" }}>
               {state.error}

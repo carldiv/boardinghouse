@@ -9,6 +9,9 @@ export interface TenantRow {
   auth_user_id: string | null;
   created_at?: string;
   move_in_date?: string | null;
+  address?: string | null;
+  emergency_contact_name?: string | null;
+  emergency_contact_phone?: string | null;
 }
 
 export interface PaymentRow {

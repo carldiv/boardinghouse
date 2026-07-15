@@ -72,6 +72,17 @@ export default async function ViewTenantPage({ params }: { params: Promise<{ id:
             <InfoRow label="Monthly Rent Rate" value={formatPeso(t.rent_amount)} valueColor="var(--color-success)" />
             <InfoRow label="Rent Due Day" value={`Day ${t.due_day} of each month`} />
             <InfoRow label="Account" value={t.auth_user_id ? "Linked" : "No Account"} valueColor={t.auth_user_id ? "var(--color-success)" : "var(--color-warning)"} />
+            {t.address && <InfoRow label="Address" value={t.address} />}
+            {(t.emergency_contact_name || t.emergency_contact_phone) && (
+              <>
+                <div style={{ borderTop: "1px solid var(--border)", marginTop: "0.25rem" }} />
+                <p style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>
+                  Emergency Contact
+                </p>
+                {t.emergency_contact_name && <InfoRow label="Name" value={t.emergency_contact_name} />}
+                {t.emergency_contact_phone && <InfoRow label="Phone" value={t.emergency_contact_phone} />}
+              </>
+            )}
           </div>
         </div>
 
