@@ -68,6 +68,16 @@ export default function EditTenantForm({ tenant }: EditTenantFormProps) {
           />
         </div>
 
+        {/* Emergency Contact */}
+        <div style={{ borderTop: "1px solid var(--border)", margin: "0.25rem 0" }} />
+        <p style={{ fontSize: "0.78rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>
+          Emergency Contact
+        </p>
+
+        <Field label="Emergency Contact Name" id="edit-emergency-name" name="emergency_contact_name" defaultValue={tenant.emergency_contact_name ?? ""} placeholder="e.g. Maria dela Cruz (Mother)" />
+        <Field label="Emergency Contact Phone" id="edit-emergency-phone" name="emergency_contact_phone" defaultValue={tenant.emergency_contact_phone ?? ""} placeholder="e.g. 09171234567" />
+        <Field label="Tenant Address" id="edit-address" name="address" defaultValue={tenant.address ?? ""} placeholder="e.g. 123 Rizal St, Brgy. San Jose, Manila" />
+
         {state?.error && (
           <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "0.5rem", padding: "0.75rem 1rem", color: "var(--color-danger)", fontSize: "0.875rem" }}>
             {state.error}
@@ -87,14 +97,14 @@ export default function EditTenantForm({ tenant }: EditTenantFormProps) {
   );
 }
 
-function Field({ label, id, name, type = "text", defaultValue, required, min, step }: {
+function Field({ label, id, name, type = "text", defaultValue, placeholder, required, min, step }: {
   label: string; id: string; name: string; type?: string;
-  defaultValue?: string; required?: boolean; min?: string; step?: string;
+  defaultValue?: string; placeholder?: string; required?: boolean; min?: string; step?: string;
 }) {
   return (
     <div>
       <label htmlFor={id} style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 500 }}>{label}</label>
-      <input id={id} name={name} type={type} defaultValue={defaultValue} required={required} min={min} step={step} className="input" />
+      <input id={id} name={name} type={type} defaultValue={defaultValue} placeholder={placeholder} required={required} min={min} step={step} className="input" />
     </div>
   );
 }
