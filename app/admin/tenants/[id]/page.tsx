@@ -79,8 +79,8 @@ export default async function ViewTenantPage({ params }: { params: Promise<{ id:
                 <p style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>
                   Emergency Contact
                 </p>
-                {t.emergency_contact_name && <InfoRow label="Name" value={t.emergency_contact_name} />}
-                {t.emergency_contact_phone && <InfoRow label="Phone" value={t.emergency_contact_phone} />}
+                {t.emergency_contact_name && <InfoRow label="Name" value={t.emergency_contact_name!} />}
+                {t.emergency_contact_phone && <InfoRow label="Phone" value={t.emergency_contact_phone!} />}
               </>
             )}
           </div>
