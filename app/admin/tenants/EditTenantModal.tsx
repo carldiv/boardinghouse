@@ -118,6 +118,7 @@ function Field({
   name,
   type = "text",
   defaultValue,
+  placeholder,
   required,
   min,
   step,
@@ -127,6 +128,7 @@ function Field({
   name: string;
   type?: string;
   defaultValue?: string;
+  placeholder?: string;
   required?: boolean;
   min?: string;
   step?: string;
@@ -144,6 +146,7 @@ function Field({
         name={name}
         type={type}
         defaultValue={defaultValue}
+        placeholder={placeholder}
         required={required}
         min={min}
         step={step}
