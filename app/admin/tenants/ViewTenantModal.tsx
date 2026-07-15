@@ -68,13 +68,13 @@ export default function ViewTenantModal({ tenant, payments, isOpen, onClose }: V
               <InfoItem label="Room Assigned" value={`Room ${tenant.room}`} />
               <InfoItem label="Monthly Rent Rate" value={formatPeso(tenant.rent_amount)} valueColor="var(--color-success)" />
               <InfoItem label="Rent Due Day" value={`Day ${tenant.due_day} of each month`} />
-              <InfoItem label="Address" value={tenant.address ?? "—"} />
               <div style={{ borderTop: "1px solid var(--border)", margin: "0.75rem 0" }} />
               <p style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 0.6rem" }}>
                 Emergency Contact
               </p>
               <InfoItem label="Name" value={tenant.emergency_contact_name ?? "—"} />
-              <InfoItem label="Phone" value={tenant.emergency_contact_phone ?? "—"} noBorder />
+              <InfoItem label="Phone" value={tenant.emergency_contact_phone ?? "—"} />
+              <InfoItem label="Address" value={tenant.address ?? "—"} noBorder />
             </div>
           </div>
 
